@@ -1,6 +1,14 @@
-import pygame as py
+import pygame
+import pieces
 
-width = height = 800
-dimension = 8
-sqSize = width // dimension
-fps  = 15
+WIDTH = HEIGHT = 800
+DIMENSION = 8
+SQ_SIZE = WIDTH // DIMENSION
+
+class Gui:
+    def __init__(self):
+        self.screen = pygame.display.set_mode((HEIGHT, WIDTH))
+        pygame.display.set_caption("Chess")
+    
+    def draw(self):
+        self.screen.fill("White")

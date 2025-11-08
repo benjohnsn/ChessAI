@@ -1,9 +1,6 @@
 import pygame
 import pieces
-
-WIDTH = HEIGHT = 800
-DIMENSION = 8
-SQ_SIZE = WIDTH // DIMENSION
+from constants import HEIGHT, WIDTH, SQ_SIZE
 
 class Gui:
     def __init__(self):

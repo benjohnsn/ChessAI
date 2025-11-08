@@ -1,8 +1,7 @@
 import pygame
 import board
 from gui import Gui
-
-FPS = 15
+from constants import FPS
 class Game:
     def __init__(self):
         pygame.init()

@@ -1,5 +1,5 @@
 import pygame
-import pieces
+import board
 from constants import HEIGHT, WIDTH, SQ_SIZE
 
 class Gui:

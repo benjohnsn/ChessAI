@@ -1,8 +1,8 @@
-import pygame as py
+import game
 
 def main():
-    py.init()
-    screen = py.display.set_mode((width, height))
-    screen.fill("White")
-    py.display.set_caption('Chess')
-    clock = py.time.Clock()
+    newGame = game()
+    newGame.run()
+
+if __name__ == "__main__":
+    main()

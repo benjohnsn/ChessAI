@@ -2,3 +2,6 @@ WIDTH = HEIGHT = 800
 DIMENSION = 8
 SQ_SIZE = WIDTH // DIMENSION
 FPS = 15
+
+COL1 = "white"
+COL2 = "saddlebrown"

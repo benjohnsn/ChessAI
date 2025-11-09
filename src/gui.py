@@ -1,5 +1,4 @@
 import pygame
-import board
 from constants import HEIGHT, WIDTH, DIMENSION, SQ_SIZE, COL1, COL2
 
 class Gui:
@@ -14,10 +13,13 @@ class Gui:
         for piece in pieces:
             self.images[piece] = pygame.image.load("images/" + piece  + ".png"), (SQ_SIZE, SQ_SIZE)
     
-    def draw(self):
-        self.screen.fill(COL1)
+    def draw(self, board):
         self.colours = [pygame.Color(COL1), pygame.Color(COL2)]
-        for self.row in range(DIMENSION):
-            for self.col in range(DIMENSION):
-                pygame.draw.rect(self.screen, self.colours[((self.row + self.col) % 2)], pygame.Rect(self.col * SQ_SIZE, self.row * SQ_SIZE, SQ_SIZE, SQ_SIZE))
-
+        for row in range(DIMENSION):
+            for col in range(DIMENSION):
+                rect = pygame.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE)
+                pygame.draw.rect(self.screen, self.colours[(row + col) % 2], rect)
+                piece = board.grid[row][col]
+                if piece != None:
+                    rect = pygame.Rect(col *SQ_SIZE, row *SQ_SIZE, SQ_SIZE, SQ_SIZE)
+                    self.screen(self.images[piece], rect)

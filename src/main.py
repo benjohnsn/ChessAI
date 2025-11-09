@@ -1,8 +1,8 @@
 from game import Game
 
 def main():
-    newGame = Game()
-    newGame.run()
+    game = Game()
+    game.run()
 
 if __name__ == "__main__":
     main()

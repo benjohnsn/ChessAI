@@ -1,5 +1,5 @@
 import pygame
-import board
+from board import Board
 from gui import Gui
 from constants import FPS
 class Game:
@@ -7,7 +7,8 @@ class Game:
         pygame.init()
         self.running = True
         self.clock = pygame.time.Clock()
-        self.Gui = Gui()
+        self.gui = Gui()
+        self.board = Board()
 
     def run(self):
         while self.running:
@@ -15,6 +16,6 @@ class Game:
                 if event.type == pygame.QUIT:
                     self.running = False
             
-            self.Gui.draw()
+            self.gui.draw(self.board)
             pygame.display.flip()
             self.clock.tick(FPS)

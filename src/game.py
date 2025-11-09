@@ -16,7 +16,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.gui = Gui()
         self.board = Board()
-        self.whiteTurn = True
+        self.turn = 'w'
         self.playerClicks = []
 
     def run(self):
@@ -37,26 +37,18 @@ class Game:
 
     def handleClick(self, pos):
         # Handles a player click on the board
-        sqSelected = self.click(pos)
-        if self.board.grid(sqSelected) == None:
-            return
+        sqSelected = self.getSquareFromPos(pos)
         self.playerClicks.append(sqSelected)
         if len(self.playerClicks) == 2:
-            if self.playerClicks[0] != self.playerClicks[1]:
-                self.move()
-                self.whiteTurn = not self.whiteTurn
+            if self.board.movePiece(self.playerClicks[0], self.playerClicks[1], self.turn):
+                if self.turn == 'w':
+                    self.turn = 'b'
+                else:
+                    self.turn = 'w'
             self.playerClicks = []
 
-    def click(self, pos):
+    def getSquareFromPos(self, pos):
         # Converts mouse position to board coordinates
         col = pos[0] // SQ_SIZE
         row = pos[1] // SQ_SIZE
         return (row, col)
-
-    def move(self):
-        # Executes a move on the board
-        startRow = self.playerClicks[0][0]
-        startCol = self.playerClicks[0][1]
-        endRow = self.playerClicks[1][0]
-        endCol = self.playerClicks[1][1]
-

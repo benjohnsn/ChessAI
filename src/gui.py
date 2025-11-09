@@ -2,18 +2,26 @@ import pygame
 from constants import SIZE, CAPTION, DIMENSION, SQ_SIZE, COL1, COL2
 
 class Gui:
+    # User interface for the chess game
+    # - Creates and manages pygame display
+    # - loads and store piece images
+    # - Draws chessboard and pieces
+
     def __init__(self):
+        # Initialises screen and loads piece images
         self.screen = pygame.display.set_mode(SIZE)
         pygame.display.set_caption(CAPTION)
         self.images = {}
         self.loadimages()
 
     def loadimages(self):
+        # Loads piece images from images folder and scales them to square size
         pieces = ['wP', 'wR', 'wN', 'wB', 'wQ', 'wK', 'bP', 'bR', 'bN', 'bB', 'bQ', 'bK']
         for piece in pieces:
             self.images[piece] = pygame.transform.scale(pygame.image.load("images/" + piece  + ".png"), (SQ_SIZE, SQ_SIZE))
     
     def draw(self, board):
+        # Draws chess board and pieces onto the scree
         colours = [pygame.Color(COL1), pygame.Color(COL2)]
         for row in range(DIMENSION):
             for col in range(DIMENSION):

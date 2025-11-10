@@ -17,7 +17,7 @@ class Game:
         self.gui = Gui()
         self.board = Board()
         self.turn = 'w'
-        self.playerClicks[2]
+        self.playerClicks = []
         self.sqSelected = ()
 
     def run(self):
@@ -42,14 +42,14 @@ class Game:
         piece = self.board.getPiece(square)
         
         # Select your own piece (allows reselection)
-        if piece.colour == self.turn:
-            self.playerClicks[0] = square
+        if piece is not None and piece.colour == self.turn:
+            self.playerClicks = [square]
             self.sqSelected = square
             return
         
         # If piece already  selected, add target square, if it does not contain player piece
         if self.playerClicks:
-            self.playerClicks[1] = square
+            self.playerClicks.append(square)
         else:
             return
         

@@ -20,7 +20,7 @@ class Gui:
         for piece in pieces:
             self.images[piece] = pygame.transform.scale(pygame.image.load("images/" + piece  + ".png"), (SQ_SIZE, SQ_SIZE))
     
-    def draw(self, board):
+    def draw(self, board, square):
         # Draws chess board and pieces onto the scree
         colours = [pygame.Color(COL1), pygame.Color(COL2)]
         for row in range(DIMENSION):

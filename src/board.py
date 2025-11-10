@@ -13,6 +13,10 @@ class Board:
             [Piece('w','R'), Piece('w','N'), Piece('w','B'), Piece('w','Q'), Piece('w','K'), Piece('w','B'), Piece('w','N'), Piece('w','R')]
         ]
 
+    def getPiece(self, square):
+        row, col = square
+        return self.grid[row][col]
+
     def movePiece(self, start, end, turn):
         startRow, startCol = start
         endRow, endCol = end

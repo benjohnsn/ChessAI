@@ -17,13 +17,14 @@ class Game:
         self.gui = Gui()
         self.board = Board()
         self.turn = 'w'
+        self.sqSelected = ()
         self.playerClicks = []
 
     def run(self):
         # Main game loop: handles events, updates Gui and ticks clock
         while self.running:
             self.handleEvents()
-            self.gui.draw(self.board)
+            self.gui.draw(self.board, self.sqSelected)
             pygame.display.flip()
             self.clock.tick(FPS)
 
@@ -37,12 +38,13 @@ class Game:
 
     def handleClick(self, pos):
         # Handles a player click on the board
-        sqSelected = self.getSquareFromPos(pos)
-        self.playerClicks.append(sqSelected)
+        self.sqSelected = self.getSquareFromPos(pos)
+        self.playerClicks.append(self.sqSelected)
         if len(self.playerClicks) == 2:
             if self.board.movePiece(self.playerClicks[0], self.playerClicks[1], self.turn):
                 if self.turn == 'w':
                     self.turn = 'b'
+                    self.sqSelected = ()
                 else:
                     self.turn = 'w'
             self.playerClicks = []

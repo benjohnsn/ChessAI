@@ -6,7 +6,7 @@ class Game:
     # Main class
     # - Tracks game state
     # - Handles player inputs
-    # - Executes moves on board and updates turn
+    # - Executes moves using board and updates turn
     # - Draws board through Gui
 
     def __init__(self):
@@ -17,6 +17,7 @@ class Game:
         self.gui = Gui()
         self.board = Board()
         self.turn = 'w'
+        self.highlightSq = ()
 
     def run(self):
         # Main game loop: handles events, updates Gui and ticks clock
@@ -37,7 +38,7 @@ class Game:
     def handleClick(self, pos):
         # Handles a player click on the board
         square = self.getSquareFromPos(pos)
-        if self.board.handleSquareClick(square, self.turn):
+        if self.board.handleSquareClick(square, self.turn, self.highlightSq):
             self.switchTurn()
 
     def getSquareFromPos(self, pos):
@@ -47,6 +48,7 @@ class Game:
         return (row, col)
 
     def switchTurn(self):
+        # Switches turns
         if self.turn == 'w':
             self.turn = 'b'
         else:

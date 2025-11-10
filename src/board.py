@@ -13,5 +13,5 @@ class Board:
             [Piece('w','R'), Piece('w','N'), Piece('w','B'), Piece('w','Q'), Piece('w','K'), Piece('w','B'), Piece('w','N'), Piece('w','R')]
         ]
 
-    def handleSquareClick(self):
-        
+    def handleSquareClick(self, square, highlightSq):
+        return True

@@ -17,7 +17,7 @@ class Game:
         self.gui = Gui()
         self.board = Board()
         self.turn = 'w'
-        self.playerClicks = []
+        self.playerClicks[2]
         self.sqSelected = ()
 
     def run(self):

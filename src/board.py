@@ -40,5 +40,5 @@ class Board:
 
         return True
         
-    def validMove(self):
+    def isLegalMove(self):
         return True

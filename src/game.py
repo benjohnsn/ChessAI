@@ -30,15 +30,16 @@ class Game:
     def handleEvents(self):
         # Handles pygame events (quit, mouse click)
         for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    self.handleClick(pygame.mouse.get_pos())
+            if event.type == pygame.QUIT:
+                self.running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                self.handleClick(pygame.mouse.get_pos())
 
     def handleClick(self, pos):
         # Handles a player click on the board
         square = self.getSquareFromPos(pos)
-        if self.board.handleSquareClick(square, self.turn, self.highlightSq):
+        if self.board.handleSquareClick(square, self.turn):
+            self.highlightSq = self.board.getHighlightSq()
             self.switchTurn()
 
     def getSquareFromPos(self, pos):

@@ -38,9 +38,7 @@ class Game:
     def handleClick(self, pos):
         # Handles a player click on the board
         square = self.getSquareFromPos(pos)
-        if self.board.handleSquareClick(square, self.turn):
-            self.highlightSq = self.board.getHighlightSq()
-            self.switchTurn()
+        
 
     def getSquareFromPos(self, pos):
         # Converts mouse position to board coordinates

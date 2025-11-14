@@ -41,24 +41,18 @@ class Game:
         square = self.getSquareFromPos(pos)
         piece = self.board.getPiece(square)
 
-        # 1st click
-        # - must be a piece of their own colour
-        # - check if it is a piece because none does not have a colour
-        if piece and piece.colour == self.turn:
+        if not self.pieceSq:
+            if piece is None:
+                return
+            if piece.colour != self.turn:
+                return
+            
             self.pieceSq = square
             return
-        
-        # 2nd click
-        # - if valid 1st click, assign 2nd click because it must be empty/enemy square
-        # - if no valid first click, return
-        if self.pieceSq:
-            self.targetSq = square
-            self.board.makeMove(self.pieceSq, self.targetSq)
-            self.switchTurn()
-            self.pieceSq = ()
-            self.targetSq = ()
-        else:
-            return
+            
+        self.targetSq = square
+        self.board.makeMove(self.pieceSq, self.targetSq)
+        self.switchTurn()
 
     def getSquareFromPos(self, pos):
         # Converts mouse position to board coordinates

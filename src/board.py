@@ -13,3 +13,12 @@ class Board:
             [Piece('w','R'), Piece('w','N'), Piece('w','B'), Piece('w','Q'), Piece('w','K'), Piece('w','B'), Piece('w','N'), Piece('w','R')]
         ]
         
+    def getPiece(self, square):
+        row, col = square
+        return self.grid[row][col]
+    
+    def makeMove(self, pieceSq, targetSq):
+        startRow, startCol = pieceSq
+        endRow, endCol = targetSq
+        self.grid[endRow][endCol] = self.grid[startRow][startCol]
+        self.grid[startRow][startCol] = None

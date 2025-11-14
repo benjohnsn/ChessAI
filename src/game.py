@@ -54,6 +54,9 @@ class Game:
         self.board.makeMove(self.pieceSq, self.targetSq)
         self.switchTurn()
 
+        self.pieceSq = ()
+        self.targetSq = ()
+
     def getSquareFromPos(self, pos):
         # Converts mouse position to board coordinates
         col = pos[0] // SQ_SIZE

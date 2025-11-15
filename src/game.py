@@ -6,18 +6,19 @@ class Game:
     # Main class
     # - Tracks game state
     # - Handles player inputs
-    # - Executes moves on board and updates turn
+    # - Executes moves using board and updates turn
     # - Draws board through Gui
 
     def __init__(self):
-        # Initialises libraries and objects
+        # Initialises pygame and objects
         pygame.init()
         self.running = True
         self.clock = pygame.time.Clock()
         self.gui = Gui()
         self.board = Board()
         self.turn = 'w'
-        self.playerClicks = []
+        self.pieceSq = ()
+        self.targetSq = ()
 
     def run(self):
         # Main game loop: handles events, updates Gui and ticks clock
@@ -30,25 +31,45 @@ class Game:
     def handleEvents(self):
         # Handles pygame events (quit, mouse click)
         for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    self.handleClick(pygame.mouse.get_pos())
+            if event.type == pygame.QUIT:
+                self.running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                self.handleClick(pygame.mouse.get_pos())
 
     def handleClick(self, pos):
         # Handles a player click on the board
-        sqSelected = self.getSquareFromPos(pos)
-        self.playerClicks.append(sqSelected)
-        if len(self.playerClicks) == 2:
-            if self.board.movePiece(self.playerClicks[0], self.playerClicks[1], self.turn):
-                if self.turn == 'w':
-                    self.turn = 'b'
-                else:
-                    self.turn = 'w'
-            self.playerClicks = []
+        square = self.getSquareFromPos(pos)
+        piece = self.board.getPiece(square)
+
+        # 1st click
+        # - Must be a piece of the current player's colour
+        # - Checks if piece is not None (None has no .colour attribute)
+        # - Allows re-selection
+        if piece and piece.colour == self.turn:
+            self.pieceSq = square
+            return
+        
+        # 2nd click
+        # - If valid 1st click, assign 2nd click because it must be empty/opponent square
+        # - If no valid first click, return
+        if self.pieceSq:
+            self.targetSq = square
+            self.board.makeMove(self.pieceSq, self.targetSq)
+            self.switchTurn()
+            self.pieceSq = ()
+            self.targetSq = ()
+        else:
+            return
 
     def getSquareFromPos(self, pos):
         # Converts mouse position to board coordinates
         col = pos[0] // SQ_SIZE
         row = pos[1] // SQ_SIZE
         return (row, col)
+
+    def switchTurn(self):
+        # Switches turns
+        if self.turn == 'w':
+            self.turn = 'b'
+        else:
+             self.turn = 'w'

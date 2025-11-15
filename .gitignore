@@ -3,31 +3,16 @@
 # -----------------------
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
 
 # -----------------------
 # Virtual environments
 # -----------------------
 env/
 venv/
-ENV/
 .venv/
 
 # -----------------------
 # VS Code settings
 # -----------------------
-.vscode/
-
-# -----------------------
-# OS generated files
-# -----------------------
-.DS_Store
-Thumbs.db
-
-# -----------------------
-# Pygame assets 
-# -----------------------
-*.egg-info/
-dist/
-build/
+.vscode/*
+!.vscode/launch.json

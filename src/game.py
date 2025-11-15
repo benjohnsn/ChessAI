@@ -19,12 +19,13 @@ class Game:
         self.turn = 'w'
         self.pieceSq = ()
         self.targetSq = ()
+        self.legalMoves = []
 
     def run(self):
         # Main game loop: handles events, updates Gui and ticks clock
         while self.running:
             self.handleEvents()
-            self.gui.draw(self.board, self.pieceSq)
+            self.gui.draw(self.board, self.pieceSq, self.legalMoves)
             pygame.display.flip()
             self.clock.tick(FPS)
 
@@ -37,7 +38,7 @@ class Game:
                 self.handleClick(pygame.mouse.get_pos())
 
     def handleClick(self, pos):
-        # Handles a player click on the board
+        # Handles player click
         square = self.getSquareFromPos(pos)
         piece = self.board.getPiece(square)
 
@@ -46,6 +47,9 @@ class Game:
         # - Checks if piece is not None (None has no .colour attribute)
         if piece and piece.colour == self.turn:
             self.pieceSq = square
+            print(square)
+            self.legalMoves = self.board.generateLegalMoves(piece, square)
+            print(self.legalMoves)
             return
         
         # 2nd click
@@ -61,6 +65,7 @@ class Game:
         # Reset selected squares
         self.pieceSq = ()
         self.targetSq = ()
+        self.legalMoves = []
 
     def getSquareFromPos(self, pos):
         # Converts mouse position to board coordinates

@@ -69,7 +69,7 @@ class Game:
     def getSquareFromPos(self, pos):
         # Converts mouse position to board coordinates
         col = pos[0] // SQ_SIZE
-        row = pos[1] // SQ_SIZE
+        row = 7 - pos[1] // SQ_SIZE
         return (row, col)
 
     def switchTurn(self):

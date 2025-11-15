@@ -25,7 +25,8 @@ class Gui:
         # Draws chess board
         for row in range(DIMENSION):
             for col in range(DIMENSION):
-                rect = pygame.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE)
+                displayRow = 7 - row
+                rect = pygame.Rect(col * SQ_SIZE, displayRow * SQ_SIZE, SQ_SIZE, SQ_SIZE)
                 colour = self.colours[(row + col) % 2]
 
                 # Higlight Square

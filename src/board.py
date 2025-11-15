@@ -3,15 +3,16 @@ from piece import Piece
 class Board:
     def __init__(self):
         self.grid = [
-            [Piece('b','R'), Piece('b','N'), Piece('b','B'), Piece('b','Q'), Piece('b','K'), Piece('b','B'), Piece('b','N'), Piece('b','R')],
-            [Piece('b','P') for _ in range(8)],
-            [None]*8,
-            [None]*8,
-            [None]*8,
-            [None]*8,
+            [Piece('w','R'), Piece('w','N'), Piece('w','B'), Piece('w','Q'), Piece('w','K'), Piece('w','B'), Piece('w','N'), Piece('w','R')],
             [Piece('w','P') for _ in range(8)],
-            [Piece('w','R'), Piece('w','N'), Piece('w','B'), Piece('w','Q'), Piece('w','K'), Piece('w','B'), Piece('w','N'), Piece('w','R')]
-        ]
+            [None]*8,
+            [None]*8,
+            [None]*8,
+            [None]*8,
+            [Piece('b','P') for _ in range(8)],
+            [Piece('b','R'), Piece('b','N'), Piece('b','B'), Piece('b','Q'), Piece('b','K'), Piece('b','B'), Piece('b','N'), Piece('b','R')]
+        ]       
+
         
     def getPiece(self, square):
         row, col = square
@@ -37,9 +38,9 @@ class Board:
         moves = []
 
         if piece.colour == 'w':
-            direction = -1
-        else:
             direction = +1
+        else:
+            direction = -1
 
         target = self.grid[row + direction][col]
         if target is None:
@@ -50,7 +51,7 @@ class Board:
             if target is None:
                 moves.append((row + direction * 2, col))
 
-        
+
 
         return moves
 

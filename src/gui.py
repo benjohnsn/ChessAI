@@ -28,6 +28,7 @@ class Gui:
                 rect = pygame.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE)
                 colour = colours[(row + col) % 2]
 
+                # Higlight Square
                 if highlightSq == (row, col):
                     colour = pygame.Color(HIGHLIGHTCOL)
 
@@ -35,12 +36,4 @@ class Gui:
                 piece = board.grid[row][col]
                 if piece != None:
                     self.screen.blit(self.images[piece.colour + piece.type], rect)
-       
-        # Draw highlighted square
-        # if highlightSq:
-        #     row, col = highlightSq
-        #     hrect = pygame.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE)
-        #     overlay = pygame.Surface((SQ_SIZE, SQ_SIZE), pygame.SRCALPHA)
-        #     overlay.fill((255, 255, 0, 120))
-
-        #     self.screen.blit(overlay, hrect)
+                    

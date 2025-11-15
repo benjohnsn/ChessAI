@@ -8,13 +8,14 @@ class Gui:
     # - Draws chessboard and pieces
 
     def __init__(self):
-        # Initialises screen and loads piece images
+        # Initialises screen, loads piece images and board colours
         self.screen = pygame.display.set_mode(SIZE)
         pygame.display.set_caption(CAPTION)
         self.images = {}
-        self.loadimages()
+        self.loadImages()
+        self.colours = [pygame.Color(LIGHT_COL), pygame.Color(DARK_COL)]
 
-    def loadimages(self):
+    def loadImages(self):
         # Loads piece images from images folder and scales them to square size
         pieces = ['wP', 'wR', 'wN', 'wB', 'wQ', 'wK', 'bP', 'bR', 'bN', 'bB', 'bQ', 'bK']
         for piece in pieces:
@@ -22,18 +23,17 @@ class Gui:
     
     def draw(self, board, highlightSq):
         # Draws chess board
-        colours = [pygame.Color(LIGHT_COL), pygame.Color(DARK_COL)]
         for row in range(DIMENSION):
             for col in range(DIMENSION):
                 rect = pygame.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE)
-                colour = colours[(row + col) % 2]
+                colour = self.colours[(row + col) % 2]
 
                 # Higlight Square
                 if highlightSq == (row, col):
-                    colour = pygame.Color(HIGHLIGHTCOL)
+                    colour = pygame.Color(HIGHLIGHT_COL)
                 pygame.draw.rect(self.screen, colour, rect)
 
                 # Draws Pieces onto correct square
                 piece = board.grid[row][col]
-                if piece != None:
+                if piece is not None:
                     self.screen.blit(self.images[piece.colour + piece.type], rect)

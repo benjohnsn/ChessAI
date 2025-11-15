@@ -49,16 +49,18 @@ class Game:
             return
         
         # 2nd click
-        # - If valid 1st click, assign 2nd click because it must be empty/opponent square
         # - If no valid first click, return
-        if self.pieceSq:
-            self.targetSq = square
-            self.board.makeMove(self.pieceSq, self.targetSq)
-            self.switchTurn()
-            self.pieceSq = ()
-            self.targetSq = ()
-        else:
+        if not self.pieceSq:
             return
+        
+        # - Assign 2nd click because it must be empty/opponent square
+        self.targetSq = square
+        self.board.makeMove(self.pieceSq, self.targetSq)
+        self.switchTurn()
+
+        # Reset selected squares
+        self.pieceSq = ()
+        self.targetSq = ()
 
     def getSquareFromPos(self, pos):
         # Converts mouse position to board coordinates

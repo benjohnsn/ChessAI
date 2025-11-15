@@ -42,16 +42,26 @@ class Board:
         else:
             direction = -1
 
-        target = self.grid[row + direction][col]
-        if target is None:
-            moves.append((row + direction,col))
-
-        if not piece.moved:
-            target = self.grid[row + (direction * 2)][col]
+        if self.inBounds(row + direction, col):
+            target = self.grid[row + direction][col]
             if target is None:
-                moves.append((row + direction * 2, col))
+                moves.append((row + direction,col))
+        
+        if self.inBounds(row + (direction * 2), col):
+            if not piece.moved and moves:
+                target = self.grid[row + (direction * 2)][col]
+                if target is None:
+                    moves.append((row + direction * 2, col))
 
+        if self.inBounds(row + direction, col - 1):
+            target = self.grid[row + direction][col - 1]
+            if target and target.colour != piece.colour:
+                moves.append((row + direction, col - 1))
 
+        if self.inBounds(row + direction, col + 1):
+            target = self.grid[row + direction][col + 1]
+            if target and target.colour != piece.colour:
+                moves.append((row + direction, col + 1))
 
         return moves
 
@@ -65,3 +75,6 @@ class Board:
         pass
     def generateKingMoves(self, piece, square):
         pass
+
+    def inBounds(self, row, col):
+        return (0 <= row < 8) and (0 <= col < 8)

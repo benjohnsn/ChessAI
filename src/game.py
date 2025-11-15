@@ -19,6 +19,7 @@ class Game:
         self.turn = 'w'
         self.pieceSq = ()
         self.targetSq = ()
+        self.legalMoves = []
 
     def run(self):
         # Main game loop: handles events, updates Gui and ticks clock
@@ -46,6 +47,9 @@ class Game:
         # - Checks if piece is not None (None has no .colour attribute)
         if piece and piece.colour == self.turn:
             self.pieceSq = square
+            print(square)
+            self.legalMoves = self.board.generateLegalMoves(piece, square)
+            print(self.legalMoves)
             return
         
         # 2nd click

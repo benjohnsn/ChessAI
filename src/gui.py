@@ -2,11 +2,11 @@ import pygame
 from constants import SIZE, CAPTION, DIMENSION, SQ_SIZE, LIGHT_COL, DARK_COL, HIGHLIGHT_COL
 
 class Gui:
-    # User interface for the chess game
-    # - Creates and manages pygame display
-    # - loads and store piece images
-    # - Draws chessboard and pieces
-
+    """User interface for the chess game
+    - Creates and manages pygame display
+    - Loads and store piece images
+    - Draws chessboard and pieces
+    """
     def __init__(self):
         # Initialises screen, loads piece images and board colours
         self.screen = pygame.display.set_mode(SIZE)

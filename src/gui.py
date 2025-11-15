@@ -1,5 +1,5 @@
 import pygame
-from constants import SIZE, CAPTION, DIMENSION, SQ_SIZE, COL1, COL2, HIGHLIGHTCOL
+from constants import SIZE, CAPTION, DIMENSION, SQ_SIZE, LIGHT_COL, DARK_COL, HIGHLIGHT_COL
 
 class Gui:
     # User interface for the chess game
@@ -21,8 +21,8 @@ class Gui:
             self.images[piece] = pygame.transform.scale(pygame.image.load("images/" + piece  + ".png"), (SQ_SIZE, SQ_SIZE))
     
     def draw(self, board, highlightSq):
-        # Draws chess board and pieces onto the screen
-        colours = [pygame.Color(COL1), pygame.Color(COL2)]
+        # Draws chess board
+        colours = [pygame.Color(LIGHT_COL), pygame.Color(DARK_COL)]
         for row in range(DIMENSION):
             for col in range(DIMENSION):
                 rect = pygame.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE)
@@ -31,9 +31,9 @@ class Gui:
                 # Higlight Square
                 if highlightSq == (row, col):
                     colour = pygame.Color(HIGHLIGHTCOL)
-
                 pygame.draw.rect(self.screen, colour, rect)
+
+                # Draws Pieces onto correct square
                 piece = board.grid[row][col]
                 if piece != None:
                     self.screen.blit(self.images[piece.colour + piece.type], rect)
-                    

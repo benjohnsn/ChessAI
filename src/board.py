@@ -49,18 +49,18 @@ class Board:
             if target is None:
                 moves.append((row + direction,col))
         
-        if self.inBounds(row + (direction * 2), col):
-            if not piece.moved and moves:
-                target = self.grid[row + (direction * 2)][col]
-                if target is None:
-                    moves.append((row + direction * 2, col))
+                if self.inBounds(row + (direction * 2), col):
+                    if not piece.moved:
+                        target = self.grid[row + (direction * 2)][col]
+                        if target is None:
+                            moves.append((row + direction * 2, col))
 
         for offset in (-1, 1):
             if self.inBounds(row + direction, col + offset):
                 target = self.grid[row + direction][col + offset]
                 if target and target.colour != piece.colour:
                     moves.append((row + direction, col + offset))
-                    
+
         return moves
 
     def generateKnightMoves(self, piece, square):

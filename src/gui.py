@@ -1,5 +1,5 @@
 import pygame
-from constants import SIZE, CAPTION, DIMENSION, SQ_SIZE, COL1, COL2
+from constants import SIZE, CAPTION, DIMENSION, SQ_SIZE, COL1, COL2, HIGHLIGHTCOL
 
 class Gui:
     # User interface for the chess game
@@ -26,11 +26,10 @@ class Gui:
         for row in range(DIMENSION):
             for col in range(DIMENSION):
                 rect = pygame.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE)
-
                 colour = colours[(row + col) % 2]
 
                 if highlightSq == (row, col):
-                    colour = pygame.Color( min(colour.r + 60, 255), min(colour.g + 60, 255), min(colour.b + 0, 255) )
+                    colour = pygame.Color(HIGHLIGHTCOL)
 
                 pygame.draw.rect(self.screen, colour, rect)
                 piece = board.grid[row][col]

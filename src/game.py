@@ -25,7 +25,7 @@ class Game:
         # Main game loop: handles events, updates Gui and ticks clock
         while self.running:
             self.handleEvents()
-            self.gui.draw(self.board, self.pieceSq)
+            self.gui.draw(self.board, self.pieceSq, self.legalMoves)
             pygame.display.flip()
             self.clock.tick(FPS)
 
@@ -65,6 +65,7 @@ class Game:
         # Reset selected squares
         self.pieceSq = ()
         self.targetSq = ()
+        self.legalMoves = []
 
     def getSquareFromPos(self, pos):
         # Converts mouse position to board coordinates

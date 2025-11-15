@@ -27,7 +27,7 @@ class Board:
         self.grid[startRow][startCol] = None
 
     def generateLegalMoves(self, piece, square):
-        # Calls move generator function dependant on piece
+        # Calls appropriate move generator function
         match piece.type:
             case 'P': return self.generatePawnMoves(piece, square)
             case 'N': return self.generateKnightMoves(piece, square)

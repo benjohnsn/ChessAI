@@ -24,7 +24,7 @@ class Game:
         # Main game loop: handles events, updates Gui and ticks clock
         while self.running:
             self.handleEvents()
-            self.gui.draw(self.board)
+            self.gui.draw(self.board, self.pieceSq)
             pygame.display.flip()
             self.clock.tick(FPS)
 

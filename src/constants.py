@@ -4,5 +4,6 @@ DIMENSION = 8
 SQ_SIZE = SIZE[0] // DIMENSION
 FPS = 15
 
-COL1 = "white"
-COL2 = "saddlebrown"
+LIGHT_COL = (238, 238, 210) # Beige
+DARK_COL = (118, 150, 86)   # Dark Green
+HIGHLIGHT_COL = (247, 236, 93)   # Yellow

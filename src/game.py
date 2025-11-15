@@ -3,12 +3,12 @@ from board import Board
 from gui import Gui
 from constants import FPS, SQ_SIZE
 class Game:
-    # Main class
-    # - Tracks game state
-    # - Handles player inputs
-    # - Executes moves using board and updates turn
-    # - Draws board through Gui
-
+    """Main class
+    - Tracks game state
+    - Handles player inputs
+    - Executes moves using board and updates turn
+    - Draws board through Gui
+    """
     def __init__(self):
         # Initialises pygame and objects
         pygame.init()
@@ -42,23 +42,25 @@ class Game:
         piece = self.board.getPiece(square)
 
         # 1st click
-        # - Must be a piece of the current player's colour (Allows re-selection)
+        # - Must be a piece of the current player's colour (allows re-selection)
         # - Checks if piece is not None (None has no .colour attribute)
         if piece and piece.colour == self.turn:
             self.pieceSq = square
             return
         
         # 2nd click
-        # - If valid 1st click, assign 2nd click because it must be empty/opponent square
         # - If no valid first click, return
-        if self.pieceSq:
-            self.targetSq = square
-            self.board.makeMove(self.pieceSq, self.targetSq)
-            self.switchTurn()
-            self.pieceSq = ()
-            self.targetSq = ()
-        else:
+        if not self.pieceSq:
             return
+        
+        # - Assign 2nd click because it must be empty/opponent square
+        self.targetSq = square
+        self.board.makeMove(self.pieceSq, self.targetSq)
+        self.switchTurn()
+
+        # Reset selected squares
+        self.pieceSq = ()
+        self.targetSq = ()
 
     def getSquareFromPos(self, pos):
         # Converts mouse position to board coordinates

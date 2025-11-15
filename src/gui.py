@@ -20,13 +20,28 @@ class Gui:
         for piece in pieces:
             self.images[piece] = pygame.transform.scale(pygame.image.load("images/" + piece  + ".png"), (SQ_SIZE, SQ_SIZE))
     
-    def draw(self, board):
-        # Draws chess board and pieces onto the scree
+    def draw(self, board, highlightSq):
+        # Draws chess board and pieces onto the screen
         colours = [pygame.Color(COL1), pygame.Color(COL2)]
         for row in range(DIMENSION):
             for col in range(DIMENSION):
                 rect = pygame.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE)
-                pygame.draw.rect(self.screen, colours[(row + col) % 2], rect)
+
+                colour = colours[(row + col) % 2]
+
+                if highlightSq == (row, col):
+                    colour = pygame.Color( min(colour.r + 60, 255), min(colour.g + 60, 255), min(colour.b + 0, 255) )
+
+                pygame.draw.rect(self.screen, colour, rect)
                 piece = board.grid[row][col]
                 if piece != None:
                     self.screen.blit(self.images[piece.colour + piece.type], rect)
+       
+        # Draw highlighted square
+        # if highlightSq:
+        #     row, col = highlightSq
+        #     hrect = pygame.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE)
+        #     overlay = pygame.Surface((SQ_SIZE, SQ_SIZE), pygame.SRCALPHA)
+        #     overlay.fill((255, 255, 0, 120))
+
+        #     self.screen.blit(overlay, hrect)

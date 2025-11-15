@@ -24,12 +24,12 @@ class Game:
         # Main game loop: handles events, updates Gui and ticks clock
         while self.running:
             self.handleEvents()
-            self.gui.draw(self.board)
+            self.gui.draw(self.board, self.pieceSq)
             pygame.display.flip()
             self.clock.tick(FPS)
 
     def handleEvents(self):
-        # Handles pygame events (quit, mouse click)
+        # Handles pygame events: quit, mouse click
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -42,9 +42,8 @@ class Game:
         piece = self.board.getPiece(square)
 
         # 1st click
-        # - Must be a piece of the current player's colour
+        # - Must be a piece of the current player's colour (Allows re-selection)
         # - Checks if piece is not None (None has no .colour attribute)
-        # - Allows re-selection
         if piece and piece.colour == self.turn:
             self.pieceSq = square
             return

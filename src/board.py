@@ -1,5 +1,5 @@
 from piece import Piece
-from constants import KNIGHT_OFFSETS, BISHOP_DIRECTIONS, ROOK_DIRECTIONS, QUEEN_DIRECTIONS, KING_OFFSETS
+from constants import DIMENSION, KNIGHT_OFFSETS, BISHOP_DIRECTIONS, ROOK_DIRECTIONS, QUEEN_DIRECTIONS, KING_OFFSETS
 
 class Board:
     def __init__(self):
@@ -133,4 +133,10 @@ class Board:
 
     def inBounds(self, row, col):
         # Checks if square is on the board
-        return (0 <= row < 8) and (0 <= col < 8)
+        return (0 <= row < DIMENSION) and (0 <= col < DIMENSION)
+    
+    def findKing(self, colour):
+        for row in range(DIMENSION):
+            for col in range(DIMENSION):
+                if self.grid[row][col] and self.grid[row][col].type == 'K' and self.grid[row][col].colour == colour:
+                    return (row, col)

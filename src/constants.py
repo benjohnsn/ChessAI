@@ -1,15 +1,19 @@
+# GUI
 SIZE = (640, 640)
 CAPTION = "Chess"
 DIMENSION = 8
 SQ_SIZE = SIZE[0] // DIMENSION
 FPS = 15
 
+# GRID COLOURS
 LIGHT_COL = (238, 238, 210) # Beige
 DARK_COL = (118, 150, 86)   # Dark Green
 
+# HIGHLIGHT COLOURS
 HIGHLIGHT_COL = (247, 236, 93)  # Yellow
 TARGET_HIGHLIGHT_COL = "Red"    # Red
 
+# OFFSETS AND DIRECTIONS
 KNIGHT_OFFSETS = [
     (-2, -1), (-2, 1),
     (-1, -2), (-1, 2),

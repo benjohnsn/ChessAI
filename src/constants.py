@@ -9,3 +9,32 @@ DARK_COL = (118, 150, 86)   # Dark Green
 
 HIGHLIGHT_COL = (247, 236, 93)  # Yellow
 TARGET_HIGHLIGHT_COL = "Red"    # Red
+
+KNIGHT_OFFSETS = [
+    (-2, -1), (-2, 1),
+    (-1, -2), (-1, 2),
+    (1, -2), (1, 2),
+    (2, -1), (2, 1)
+]
+
+BISHOP_DIRECTIONS = [
+    (-1, -1),
+    (-1,  1),
+    (1,  -1),
+    (1,   1),
+]
+
+ROOK_DIRECTIONS = [
+    (1, 0),
+    (-1, 0),
+    (0, 1),
+    (0, -1),
+]
+
+QUEEN_DIRECTIONS = BISHOP_DIRECTIONS + ROOK_DIRECTIONS
+
+KING_OFFSETS = [
+    (-1, -1), (-1, 0), (-1, +1),
+    ( 0, -1),          ( 0, +1),
+    (+1, -1), (+1, 0), (+1, +1)
+]

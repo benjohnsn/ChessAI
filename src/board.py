@@ -1,5 +1,5 @@
 from piece import Piece
-from constants import KNIGHT_OFFSETS, BISHOP_DIRECTIONS, ROOK_DIRECTIONS
+from constants import KNIGHT_OFFSETS, BISHOP_DIRECTIONS, ROOK_DIRECTIONS, QUEEN_DIRECTIONS
 
 class Board:
     def __init__(self):
@@ -90,7 +90,9 @@ class Board:
         return self.generateSlidingMoves(piece, square, ROOK_DIRECTIONS)
 
     def generateQueenMoves(self, piece, square):
-        pass
+        # Generates the list of legal Queen Moves
+        return self.generateSlidingMoves(piece, square, QUEEN_DIRECTIONS)
+
     def generateKingMoves(self, piece, square):
         pass
 

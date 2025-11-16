@@ -135,6 +135,9 @@ class Board:
         # Checks if square is on the board
         return (0 <= row < DIMENSION) and (0 <= col < DIMENSION)
     
+    def isKingInCheck(self, colour):
+        kingSq = self.findKing(colour)
+    
     def findKing(self, colour):
         for row in range(DIMENSION):
             for col in range(DIMENSION):

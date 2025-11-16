@@ -20,6 +20,7 @@ class Game:
         self.pieceSq = ()
         self.targetSq = ()
         self.legalMoves = []
+        self.inCheck = False
 
     def run(self):
         # Main game loop: handles events, updates Gui and ticks clock
@@ -62,11 +63,9 @@ class Game:
         if self.targetSq in self.legalMoves:
             self.board.makeMove(self.pieceSq, self.targetSq)
             self.switchTurn()
+            self.inCheck = self.board.isKingInCheck(self.turn)
 
-            # Reset selected squares
-            self.pieceSq = ()
-            self.targetSq = ()
-            self.legalMoves = []
+        self.resetMoveData()
 
     def getSquareFromPos(self, pos):
         # Converts mouse position to board coordinates
@@ -80,3 +79,9 @@ class Game:
             self.turn = 'b'
         else:
              self.turn = 'w'
+
+    def resetMoveData(self):
+        # Reset selected squares
+        self.pieceSq = ()
+        self.targetSq = ()
+        self.legalMoves = []

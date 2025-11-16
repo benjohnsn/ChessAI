@@ -58,6 +58,7 @@ class Game:
         # - Assign 2nd click because it must be empty/opponent square
         self.targetSq = square
         
+        # - If click is in the list of legal moves, make the move
         if self.targetSq in self.legalMoves:
             self.board.makeMove(self.pieceSq, self.targetSq)
             self.switchTurn()

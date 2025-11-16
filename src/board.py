@@ -30,7 +30,7 @@ class Board:
         self.grid[endRow][endCol] = piece
         self.grid[startRow][startCol] = None
 
-    def generateLegalMoves(self, piece, square):
+    def generatePseudoLegalMoves(self, piece, square):
         # Calls appropriate move generator function
         match piece.type:
             case 'P': return self.generatePawnMoves(piece, square)
@@ -130,17 +130,58 @@ class Board:
 
         return moves
 
-
     def inBounds(self, row, col):
         # Checks if square is on the board
         return (0 <= row < DIMENSION) and (0 <= col < DIMENSION)
     
     def isKingInCheck(self, colour):
         kingSq = self.findKing(colour)
-    
+
+        for row in range(DIMENSION):
+            for col in range(DIMENSION):
+
+                piece = self.grid[row][col]
+                if piece is None or piece.colour == colour:
+                    continue
+                 
+                attacks = self.generateAttacks(piece, (row, col))
+                
+                if kingSq in attacks:
+                    return True
+                
+        return False
+
     def findKing(self, colour):
+        # Iterates through the board to find the player's king
         for row in range(DIMENSION):
             for col in range(DIMENSION):
                 piece = self.grid[row][col]
                 if piece and piece.type == 'K' and piece.colour == colour:
                     return (row, col)
+                
+    def generateAttacks(self, piece, square):
+        # Calls appropriate attack generator function
+        match piece.type:
+            case 'P': return self.generatePawnAttacks(piece, square)
+            case 'N': return self.generateKnightMoves(piece, square)
+            case 'B': return self.generateSlidingMoves(piece, square, BISHOP_DIRECTIONS)
+            case 'R': return self.generateSlidingMoves(piece, square, ROOK_DIRECTIONS)
+            case 'Q': return self.generateSlidingMoves(piece, square, QUEEN_DIRECTIONS)
+            case 'K': return self.generateKingMoves(piece, square)
+
+    def generatePawnAttacks(self, piece, square):
+        # Generates the list of legal pawn moves
+        row, col = square
+        attacks = []
+
+        if piece.colour == 'w':
+            rowOffset = -1
+        else:
+            rowOffset = +1
+       
+        # Diagonal Captures
+        for colOffset in (-1, 1):
+            if self.inBounds(row + rowOffset, col + colOffset):
+                attacks.append((row + rowOffset, col + colOffset))
+
+        return attacks

@@ -48,7 +48,7 @@ class Game:
         # - Checks if piece is not None (None has no .colour attribute)
         if piece and piece.colour == self.turn:
             self.pieceSq = square
-            self.legalMoves = self.board.generateLegalMoves(piece, square)
+            self.legalMoves = self.board.generatePseudoLegalMoves(piece, square)
             return
         
         # 2nd click
@@ -65,7 +65,7 @@ class Game:
             self.switchTurn()
             self.inCheck = self.board.isKingInCheck(self.turn)
 
-        self.resetMoveData()
+            self.resetMoveData()
 
     def getSquareFromPos(self, pos):
         # Converts mouse position to board coordinates

@@ -1,5 +1,5 @@
 from piece import Piece
-from constants import KNIGHT_OFFSETS, BISHOP_DIRECTIONS, ROOK_DIRECTIONS, QUEEN_DIRECTIONS
+from constants import KNIGHT_OFFSETS, BISHOP_DIRECTIONS, ROOK_DIRECTIONS, QUEEN_DIRECTIONS, KING_OFFSETS
 
 class Board:
     def __init__(self):
@@ -118,7 +118,18 @@ class Board:
         return moves
     
     def generateKingMoves(self, piece, square):
-        pass
+        # Generate the list of legal King Moves
+        row, col = square
+        moves = []
+
+        for rowOffset, colOffset in KING_OFFSETS:
+            if self.inBounds(row + rowOffset, col + colOffset):
+                target = self.grid[row + rowOffset][col + colOffset]
+                if target is None or target.colour != piece.colour:
+                    moves.append((row + rowOffset, col + colOffset))
+
+        return moves
+
 
     def inBounds(self, row, col):
         # Checks if square is on the board

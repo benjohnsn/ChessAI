@@ -32,3 +32,9 @@ ROOK_DIRECTIONS = [
 ]
 
 QUEEN_DIRECTIONS = BISHOP_DIRECTIONS + ROOK_DIRECTIONS
+
+KING_OFFSETS = [
+    (-1, -1), (-1, 0), (-1, +1),
+    ( 0, -1),          ( 0, +1),
+    (+1, -1), (+1, 0), (+1, +1)
+]

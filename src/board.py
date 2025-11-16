@@ -31,9 +31,9 @@ class Board:
         match piece.type:
             case 'P': return self.generatePawnMoves(piece, square)
             case 'N': return self.generateKnightMoves(piece, square)
-            case 'B': return self.generateBishopMoves(piece, square)
-            case 'R': return self.generateRookMoves(piece, square)
-            case 'Q': return self.generateQueenMoves(piece, square)
+            case 'B': return self.generateSlidingMoves(piece, square, BISHOP_DIRECTIONS)
+            case 'R': return self.generateSlidingMoves(piece, square, ROOK_DIRECTIONS)
+            case 'Q': return self.generateSlidingMoves(piece, square, QUEEN_DIRECTIONS)
             case 'K': return self.generateKingMoves(piece, square)
 
     def generatePawnMoves(self, piece, square):
@@ -81,21 +81,6 @@ class Board:
 
         return moves
 
-    def generateBishopMoves(self, piece, square):
-        # Generates the list of legal Bishop moves
-        return self.generateSlidingMoves(piece, square, BISHOP_DIRECTIONS)
-
-    def generateRookMoves(self, piece, square):
-        # Generates the list of legal Rook moves
-        return self.generateSlidingMoves(piece, square, ROOK_DIRECTIONS)
-
-    def generateQueenMoves(self, piece, square):
-        # Generates the list of legal Queen Moves
-        return self.generateSlidingMoves(piece, square, QUEEN_DIRECTIONS)
-
-    def generateKingMoves(self, piece, square):
-        pass
-
     def generateSlidingMoves(self, piece, square, directions):
         # Generates the list of sliding moves given a list of directions
         row, col = square
@@ -127,6 +112,9 @@ class Board:
                 curCol += colDir
 
         return moves
+    
+    def generateKingMoves(self, piece, square):
+        pass
 
     def inBounds(self, row, col):
         # Checks if square is on the board

@@ -1,5 +1,5 @@
 from piece import Piece
-from constants import KNIGHT_OFFSETS
+from constants import KNIGHT_OFFSETS, BISHOP_DIRECTIONS
 
 class Board:
     def __init__(self):
@@ -82,13 +82,47 @@ class Board:
         return moves
 
     def generateBishopMoves(self, piece, square):
-        pass
+        # Generates the list of legal Bishop moves
+        return self.generateSlidingMoves(piece, square, BISHOP_DIRECTIONS)
+
     def generateRookMoves(self, piece, square):
         pass
     def generateQueenMoves(self, piece, square):
         pass
     def generateKingMoves(self, piece, square):
         pass
+
+    def generateSlidingMoves(self, piece, square, directions):
+        # Generates the list of sliding moves given a list of directions
+        row, col = square
+        moves = []
+
+        # Check for each direction the piece can slide
+        for rowDir, colDir in directions:
+
+            # Step to first square in this direction
+            curRow = row + rowDir
+            curCol = col + colDir
+
+            # Keep moving until out of bounds/blocked
+            while self.inBounds(curRow, curCol):
+                target = self.grid[curRow][curCol]
+                
+                if target is None:
+                    # Empty Square
+                    moves.append((curRow, curCol))
+                else:
+                    # Opponent piece
+                    if target.colour != piece.colour:
+                        moves.append((curRow, curCol))
+                    # Blocked by friendly piece
+                    break
+                
+                # Step to the next square in this direction
+                curRow += rowDir
+                curCol += colDir
+
+        return moves
 
     def inBounds(self, row, col):
         # Checks if square is on the board

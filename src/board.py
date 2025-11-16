@@ -23,7 +23,11 @@ class Board:
         # Moves piece to the target square
         startRow, startCol = pieceSq
         endRow, endCol = targetSq
-        self.grid[endRow][endCol] = self.grid[startRow][startCol]
+
+        piece = self.grid[startRow][startCol]
+        piece.moved = True
+
+        self.grid[endRow][endCol] = piece
         self.grid[startRow][startCol] = None
 
     def generateLegalMoves(self, piece, square):

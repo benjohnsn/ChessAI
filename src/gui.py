@@ -1,5 +1,5 @@
 import pygame
-from constants import SIZE, CAPTION, DIMENSION, SQ_SIZE, LIGHT_COL, DARK_COL, HIGHLIGHT_COL, TARGET_HIGHLIGHT_COL
+from constants import SIZE, CAPTION, DIMENSION, SQ_SIZE, LIGHT_COL, DARK_COL, SELECTION_HIGHLIGHT_COL, TARGET_HIGHLIGHT_COL
 
 class Gui:
     """
@@ -16,6 +16,7 @@ class Gui:
         self.images = {}
         self.loadImages()
         self.colours = [pygame.Color(LIGHT_COL), pygame.Color(DARK_COL)]
+        self.highlightColours = [pygame.Color(SELECTION_HIGHLIGHT_COL), pygame.Color(TARGET_HIGHLIGHT_COL)]
 
     def loadImages(self):
         # Loads piece images from images folder and scales them to square size
@@ -31,14 +32,12 @@ class Gui:
                 colour = self.colours[(row + col) % 2]
 
                 # Higlight Square
-                if highlightSq == (row, col):
-                    colour = pygame.Color(HIGHLIGHT_COL)
+                if (row, col) == highlightSq:
+                    colour = self.highlightColours[0]
                 
                 # Highlight Target squares
-                if targetSqs:
-                    for targetSq in targetSqs:
-                        if targetSq == (row, col):
-                            colour = pygame.Color(TARGET_HIGHLIGHT_COL)
+                if (row, col) in targetSqs:
+                    colour = self.highlightColours[1]
 
                 pygame.draw.rect(self.screen, colour, rect)
 

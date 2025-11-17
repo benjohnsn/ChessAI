@@ -1,6 +1,7 @@
 import pygame
-from board import Board
 from gui import Gui
+from board import Board
+from move import Move
 from constants import FPS, SQ_SIZE
 class Game:
     """
@@ -21,13 +22,14 @@ class Game:
         self.pieceSq = ()
         self.targetSq = ()
         self.legalMoves = []
+        self.targetSqs = []
         self.inCheck = False
 
     def run(self):
         # Main game loop: handles events, updates Gui and ticks clock
         while self.running:
             self.handleEvents()
-            self.gui.draw(self.board, self.pieceSq, self.legalMoves)
+            self.gui.draw(self.board, self.pieceSq, self.targetSqs)
             pygame.display.flip()
             self.clock.tick(FPS)
 
@@ -50,6 +52,7 @@ class Game:
         if piece and piece.colour == self.turn:
             self.pieceSq = square
             self.legalMoves = self.board.generateLegalMoves(piece, square)
+            self.targetSqs = [move.endSq for move in self.legalMoves]
             return
         
         # 2nd click
@@ -61,12 +64,14 @@ class Game:
         self.targetSq = square
         
         # - If click is in the list of legal moves, make the move
-        if self.targetSq in self.legalMoves:
-            self.board.makeMove(self.pieceSq, self.targetSq)
-            self.switchTurn()
-            self.inCheck = self.board.isKingInCheck(self.turn)
+        for move in self.legalMoves: 
+            if self.targetSq == move.endSq:
 
-            self.resetMoveData()
+                self.board.makeMove(move)
+                self.switchTurn()
+                self.inCheck = self.board.isKingInCheck(self.turn)
+
+                self.resetMoveData()
 
     def getSquareFromPos(self, pos):
         # Converts mouse position to board coordinates
@@ -86,3 +91,4 @@ class Game:
         self.pieceSq = ()
         self.targetSq = ()
         self.legalMoves = []
+        self.targetSqs = []

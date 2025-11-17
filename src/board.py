@@ -6,8 +6,8 @@ class Board:
     """
     Represents the chess board and handles related logic
     - Stores and updates the board (move/undo) using history
-    - Generates legal moves for each piece
-    - Check Detection
+    - Generates pseudo-legal moves for each piece
+    - Filters for legal moves using check detection
     """
     def __init__(self):
         self.grid = [
@@ -27,19 +27,16 @@ class Board:
         row, col = square
         return self.grid[row][col]
     
-    def makeMove(self, pieceSq, targetSq):
-        # Moves piece to the target square and adds move to history
-        startRow, startCol = pieceSq
-        endRow, endCol = targetSq
+    def makeMove(self, move):
+        # Executes a move object on the board and pushes it to history
+        startRow, startCol = move.startSq
+        endRow, endCol = move.endSq
 
-        piece = self.grid[startRow][startCol]
-        target = self.grid[endRow][endCol]
-
-        move = Move(pieceSq, targetSq, piece, target, False, None, False, piece.moved)
-
-        piece.moved = True
-        self.grid[endRow][endCol] = piece
         self.grid[startRow][startCol] = None
+        self.grid[endRow][endCol] = move.piece
+
+        move.pieceMoved = move.piece.moved
+        move.piece.moved = True
 
         self.history.append(move)
 
@@ -61,7 +58,8 @@ class Board:
         legalMoves = []
 
         for move in pseudoLegalMoves:
-            self.makeMove(square, move)
+
+            self.makeMove(move)
 
             if not self.isKingInCheck(piece.colour):
                 legalMoves.append(move)
@@ -97,25 +95,27 @@ class Board:
         if self.inBounds(r, c):
             target = self.grid[r][c]
             if target is None:
-                moves.append((r,c))
+                move = Move(square, (r, c), piece, target, piece.moved)
+                moves.append(move)
                 
-                r = row + (rowOffset * 2)
+                r2 = row + (rowOffset * 2)
 
                 # Forward two squares (only if pawn has not moved)
-                if self.inBounds(r, c):
+                if self.inBounds(r2, c):
                     if not piece.moved:
-                        target = self.grid[r][c]
+                        target = self.grid[r2][c]
                         if target is None:
-                            moves.append((r, c))
+                            move = Move(square, (r2, c), piece, target, piece.moved)
+                            moves.append(move)
 
         # Diagonal Captures
         for colOffset in (-1, 1):
-            r = row + rowOffset
             c = col + colOffset
-            if self.inBounds(row + rowOffset, col + colOffset):
-                target = self.grid[row + rowOffset][col + colOffset]
+            if self.inBounds(r, c):
+                target = self.grid[r][c]
                 if target and target.colour != piece.colour:
-                    moves.append((row + rowOffset, col + colOffset))
+                    move = Move(square, (r, c), piece, target, piece.moved)
+                    moves.append(move)
 
         return moves
 
@@ -130,7 +130,8 @@ class Board:
             if self.inBounds(r, c):
                 target = self.grid[r][c]
                 if target is None or target.colour != piece.colour:
-                    moves.append((r, c))
+                    move = Move(square, (r, c), piece, target, piece.moved)
+                    moves.append(move)
 
         return moves
 
@@ -149,10 +150,12 @@ class Board:
                 target = self.grid[r][c]
                 
                 if target is None:          # Empty Square
-                    moves.append((r, c))
+                    move = Move(square, (r, c), piece, target, piece.moved)
+                    moves.append(move)
                 else:
                     if target.colour != piece.colour:   # Opponent Piece
-                        moves.append((r, c))
+                        move = Move(square, (r, c), piece, target, piece.moved)
+                        moves.append(move)
                     break                               # Blocked by Friendly Piece
                 
                 # Step to the next square in this direction
@@ -172,7 +175,8 @@ class Board:
             if self.inBounds(r, c):
                 target = self.grid[r][c]
                 if target is None or target.colour != piece.colour:
-                    moves.append((r, c))
+                    move = Move(square, (r, c), piece, target, piece.moved)
+                    moves.append(move)
 
         return moves
 
@@ -243,6 +247,15 @@ class Board:
 
                 r += rowDir
                 c += colDir
+
+        # King Attacks
+        for rowOffset, colOffset in KING_OFFSETS:
+            r = kingRow + rowOffset
+            c = kingCol + colOffset
+            if self.inBounds(r, c):
+                piece = self.grid[r][c]
+                if piece and piece.colour == enemy and piece.type == 'K':
+                    return True
                 
         return False
 

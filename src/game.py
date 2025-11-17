@@ -91,3 +91,4 @@ class Game:
         self.pieceSq = ()
         self.targetSq = ()
         self.legalMoves = []
+        self.targetSqs = []

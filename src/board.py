@@ -247,6 +247,15 @@ class Board:
 
                 r += rowDir
                 c += colDir
+
+        # King Attacks
+        for rowOffset, colOffset in KING_OFFSETS:
+            r = kingRow + rowOffset
+            c = kingCol + colOffset
+            if self.inBounds(r, c):
+                piece = self.grid[r][c]
+                if piece and piece.colour == enemy and piece.type == 'K':
+                    return True
                 
         return False
 

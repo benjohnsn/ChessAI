@@ -72,6 +72,7 @@ class Game:
                 self.switchTurn()
 
                 self.resetMoveData()
+                return
 
     def getSquareFromPos(self, pos):
         # Converts mouse position to board coordinates

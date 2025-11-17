@@ -43,9 +43,18 @@ class Board:
 
         self.history.append(move)
 
-    def undoMove():
+    def undoMove(self):
         # Undoes a move using history
-        pass
+        move = self.history.pop()
+
+        startRow, startCol = move.startSq
+        endRow, endCol = move.endSq
+
+        self.grid[startRow][startCol] = move.piece
+        self.grid[endRow][endCol] = move.pieceCaptured
+
+        move.piece.moved = move.pieceMoved
+
 
     def generateLegalMoves(self, piece, square):
         # Generates the list of legal Moves
@@ -53,7 +62,7 @@ class Board:
         legalMoves = []
 
         for move in pseudoLegalMoves:
-            self.makeMove(square)
+            self.makeMove(square, move)
 
             if not self.isKingInCheck(piece.colour):
                 legalMoves.append(move)

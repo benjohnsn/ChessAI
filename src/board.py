@@ -103,7 +103,7 @@ class Board:
         for rowDir, colDir in directions:
             r = row + rowDir
             c = col + colDir
-            
+
             # Keep moving until out of bounds/blocked
             while self.inBounds(r, c):
                 target = self.grid[r][c]
@@ -142,7 +142,67 @@ class Board:
     
     def isKingInCheck(self, colour):
         # Checks if the player's king is in check
-        kingSq = self.findKing(colour)
+        kingRow, kingCol = self.findKing(colour)
+
+        if colour == 'w':
+            enemy = 'b'
+        else:
+            enemy = 'w'
+
+        # Pawn Attacks
+        if colour == 'w':
+            rowOffset = -1
+        else:
+            rowOffset = +1
+
+        for colOffset in (-1, 1):
+            r = kingRow + rowOffset
+            c = kingCol + colOffset
+            if self.inBounds(r, c):
+                piece = self.grid[r][c]
+                if piece and piece.colour == enemy and piece.type == 'P':
+                    return True
+        
+        # Knight Attacks
+        for rowOffset, colOffset in KNIGHT_OFFSETS:
+            r = kingRow + rowOffset
+            c = kingCol + colOffset
+            if self.inBounds(r, c):
+                piece = self.grid[r][c]
+                if piece and piece.colour == enemy and piece.type == 'N':
+                    return True
+
+        # Rook and Queen Attacks (straight lines) 
+        for rowDir, colDir in ROOK_DIRECTIONS:
+            r = kingRow + rowDir
+            c = kingCol + colDir
+
+            while self.inBounds(r, c):
+                piece = self.grid[r][c]
+
+                if piece:
+                    if piece.colour == enemy and (piece.type == 'R' or piece.type == 'Q'):
+                        return True
+                    break
+
+                r += rowDir
+                c += colDir
+
+        # Bishop and Queen Attacks (diagonal lines)
+        for rowDir, colDir in BISHOP_DIRECTIONS:
+            r = kingRow + rowDir
+            c = kingCol + colDir
+
+            while self.inBounds(r, c):
+                piece = self.grid[r][c]
+
+                if piece:
+                    if piece.colour == enemy and (piece.type == 'B' or piece.type == 'Q'):
+                        return True
+                    break
+
+                r += rowDir
+                c += colDir
                 
         return False
 

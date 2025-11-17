@@ -1,7 +1,14 @@
 from piece import Piece
-from constants import KNIGHT_OFFSETS, BISHOP_DIRECTIONS, ROOK_DIRECTIONS, QUEEN_DIRECTIONS, KING_OFFSETS
+from board import Move
+from constants import DIMENSION, KNIGHT_OFFSETS, BISHOP_DIRECTIONS, ROOK_DIRECTIONS, QUEEN_DIRECTIONS, KING_OFFSETS
 
 class Board:
+    """
+    Represents the chess board and handles related logic
+    - Stores and updates the board (move/undo) using history
+    - Generates legal moves for each piece
+    - Check Detection
+    """
     def __init__(self):
         self.grid = [
             [Piece('b','R'), Piece('b','N'), Piece('b','B'), Piece('b','Q'), Piece('b','K'), Piece('b','B'), Piece('b','N'), Piece('b','R')],
@@ -13,6 +20,7 @@ class Board:
             [Piece('w','P') for _ in range(8)],
             [Piece('w','R'), Piece('w','N'), Piece('w','B'), Piece('w','Q'), Piece('w','K'), Piece('w','B'), Piece('w','N'), Piece('w','R')]
         ]
+        self.history = []
 
     def getPiece(self, square):
         # Returns piece at square
@@ -30,7 +38,26 @@ class Board:
         self.grid[endRow][endCol] = piece
         self.grid[startRow][startCol] = None
 
+    def undoMove():
+        # Undoes a move using history
+        pass
+
     def generateLegalMoves(self, piece, square):
+        # Generates the list of legal Moves
+        pseudoLegalMoves = self.generatePseudoLegalMoves(piece, square)
+        legalMoves = []
+
+        for move in pseudoLegalMoves:
+            self.makeMove(square)
+
+            if not self.isKingInCheck(piece.colour):
+                legalMoves.append(move)
+
+            self.undoMove()
+
+        return legalMoves
+
+    def generatePseudoLegalMoves(self, piece, square):
         # Calls appropriate move generator function
         match piece.type:
             case 'P': return self.generatePawnMoves(piece, square)
@@ -50,21 +77,28 @@ class Board:
         else:
             rowOffset = +1
 
+        r = row + rowOffset
+        c = col
+
         # Forward one square
-        if self.inBounds(row + rowOffset, col):
-            target = self.grid[row + rowOffset][col]
+        if self.inBounds(r, c):
+            target = self.grid[r][c]
             if target is None:
-                moves.append((row + rowOffset,col))
+                moves.append((r,c))
                 
+                r = row + (rowOffset * 2)
+
                 # Forward two squares (only if pawn has not moved)
-                if self.inBounds(row + (rowOffset * 2), col):
+                if self.inBounds(r, c):
                     if not piece.moved:
-                        target = self.grid[row + (rowOffset * 2)][col]
+                        target = self.grid[r][c]
                         if target is None:
-                            moves.append((row + rowOffset * 2, col))
-       
+                            moves.append((r, c))
+
         # Diagonal Captures
         for colOffset in (-1, 1):
+            r = row + rowOffset
+            c = col + colOffset
             if self.inBounds(row + rowOffset, col + colOffset):
                 target = self.grid[row + rowOffset][col + colOffset]
                 if target and target.colour != piece.colour:
@@ -78,10 +112,12 @@ class Board:
         moves = []
 
         for rowOffset, colOffset in KNIGHT_OFFSETS:
-            if self.inBounds(row + rowOffset, col + colOffset):
-                target = self.grid[row + rowOffset][col + colOffset]
+            r = row + rowOffset
+            c = col + colOffset
+            if self.inBounds(r, c):
+                target = self.grid[r][c]
                 if target is None or target.colour != piece.colour:
-                    moves.append((row + rowOffset, col + colOffset))
+                    moves.append((r, c))
 
         return moves
 
@@ -92,28 +128,23 @@ class Board:
 
         # Check for each direction the piece can slide
         for rowDir, colDir in directions:
-
-            # Step to first square in this direction
-            curRow = row + rowDir
-            curCol = col + colDir
+            r = row + rowDir
+            c = col + colDir
 
             # Keep moving until out of bounds/blocked
-            while self.inBounds(curRow, curCol):
-                target = self.grid[curRow][curCol]
+            while self.inBounds(r, c):
+                target = self.grid[r][c]
                 
-                if target is None:
-                    # Empty Square
-                    moves.append((curRow, curCol))
+                if target is None:          # Empty Square
+                    moves.append((r, c))
                 else:
-                    # Opponent piece
-                    if target.colour != piece.colour:
-                        moves.append((curRow, curCol))
-                    # Blocked by friendly piece
-                    break
+                    if target.colour != piece.colour:   # Opponent Piece
+                        moves.append((r, c))
+                    break                               # Blocked by Friendly Piece
                 
                 # Step to the next square in this direction
-                curRow += rowDir
-                curCol += colDir
+                r += rowDir
+                c += colDir
 
         return moves
     
@@ -123,14 +154,90 @@ class Board:
         moves = []
 
         for rowOffset, colOffset in KING_OFFSETS:
-            if self.inBounds(row + rowOffset, col + colOffset):
-                target = self.grid[row + rowOffset][col + colOffset]
+            r = row + rowOffset
+            c = col + colOffset
+            if self.inBounds(r, c):
+                target = self.grid[r][c]
                 if target is None or target.colour != piece.colour:
-                    moves.append((row + rowOffset, col + colOffset))
+                    moves.append((r, c))
 
         return moves
 
-
     def inBounds(self, row, col):
         # Checks if square is on the board
-        return (0 <= row < 8) and (0 <= col < 8)
+        return (0 <= row < DIMENSION) and (0 <= col < DIMENSION)
+    
+    def isKingInCheck(self, colour):
+        # Checks if the player's king is in check
+        kingRow, kingCol = self.findKing(colour)
+
+        if colour == 'w':
+            enemy = 'b'
+        else:
+            enemy = 'w'
+
+        # Pawn Attacks
+        if colour == 'w':
+            rowOffset = -1
+        else:
+            rowOffset = +1
+
+        for colOffset in (-1, 1):
+            r = kingRow + rowOffset
+            c = kingCol + colOffset
+            if self.inBounds(r, c):
+                piece = self.grid[r][c]
+                if piece and piece.colour == enemy and piece.type == 'P':
+                    return True
+        
+        # Knight Attacks
+        for rowOffset, colOffset in KNIGHT_OFFSETS:
+            r = kingRow + rowOffset
+            c = kingCol + colOffset
+            if self.inBounds(r, c):
+                piece = self.grid[r][c]
+                if piece and piece.colour == enemy and piece.type == 'N':
+                    return True
+
+        # Rook and Queen Attacks (straight lines) 
+        for rowDir, colDir in ROOK_DIRECTIONS:
+            r = kingRow + rowDir
+            c = kingCol + colDir
+
+            while self.inBounds(r, c):
+                piece = self.grid[r][c]
+
+                if piece:
+                    if piece.colour == enemy and (piece.type == 'R' or piece.type == 'Q'):
+                        return True
+                    break
+
+                r += rowDir
+                c += colDir
+
+        # Bishop and Queen Attacks (diagonal lines)
+        for rowDir, colDir in BISHOP_DIRECTIONS:
+            r = kingRow + rowDir
+            c = kingCol + colDir
+
+            while self.inBounds(r, c):
+                piece = self.grid[r][c]
+
+                if piece:
+                    if piece.colour == enemy and (piece.type == 'B' or piece.type == 'Q'):
+                        return True
+                    break
+
+                r += rowDir
+                c += colDir
+                
+        return False
+
+    def findKing(self, colour):
+        # Iterates through the board to find the player's king
+        for row in range(DIMENSION):
+            for col in range(DIMENSION):
+                piece = self.grid[row][col]
+                if piece and piece.type == 'K' and piece.colour == colour:
+                    return (row, col)
+                

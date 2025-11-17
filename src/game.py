@@ -3,7 +3,8 @@ from board import Board
 from gui import Gui
 from constants import FPS, SQ_SIZE
 class Game:
-    """Main class
+    """
+    Main class
     - Tracks game state
     - Handles player inputs
     - Executes moves using board and updates turn
@@ -20,6 +21,7 @@ class Game:
         self.pieceSq = ()
         self.targetSq = ()
         self.legalMoves = []
+        self.inCheck = False
 
     def run(self):
         # Main game loop: handles events, updates Gui and ticks clock
@@ -58,14 +60,13 @@ class Game:
         # - Assign 2nd click because it must be empty/opponent square
         self.targetSq = square
         
+        # - If click is in the list of legal moves, make the move
         if self.targetSq in self.legalMoves:
             self.board.makeMove(self.pieceSq, self.targetSq)
             self.switchTurn()
+            self.inCheck = self.board.isKingInCheck(self.turn)
 
-            # Reset selected squares
-            self.pieceSq = ()
-            self.targetSq = ()
-            self.legalMoves = []
+            self.resetMoveData()
 
     def getSquareFromPos(self, pos):
         # Converts mouse position to board coordinates
@@ -79,3 +80,9 @@ class Game:
             self.turn = 'b'
         else:
              self.turn = 'w'
+
+    def resetMoveData(self):
+        # Reset selected squares
+        self.pieceSq = ()
+        self.targetSq = ()
+        self.legalMoves = []

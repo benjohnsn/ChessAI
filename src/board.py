@@ -50,21 +50,28 @@ class Board:
         else:
             rowOffset = +1
 
+        r = row + rowOffset
+        c = col
+
         # Forward one square
-        if self.inBounds(row + rowOffset, col):
-            target = self.grid[row + rowOffset][col]
+        if self.inBounds(r, c):
+            target = self.grid[r][c]
             if target is None:
-                moves.append((row + rowOffset,col))
+                moves.append((r,c))
                 
+                r = row + (rowOffset * 2)
+
                 # Forward two squares (only if pawn has not moved)
-                if self.inBounds(row + (rowOffset * 2), col):
+                if self.inBounds(r, c):
                     if not piece.moved:
-                        target = self.grid[row + (rowOffset * 2)][col]
+                        target = self.grid[r][c]
                         if target is None:
-                            moves.append((row + rowOffset * 2, col))
-       
+                            moves.append((r, c))
+
         # Diagonal Captures
         for colOffset in (-1, 1):
+            r = row + rowOffset
+            c = col + colOffset
             if self.inBounds(row + rowOffset, col + colOffset):
                 target = self.grid[row + rowOffset][col + colOffset]
                 if target and target.colour != piece.colour:
@@ -78,10 +85,12 @@ class Board:
         moves = []
 
         for rowOffset, colOffset in KNIGHT_OFFSETS:
-            if self.inBounds(row + rowOffset, col + colOffset):
-                target = self.grid[row + rowOffset][col + colOffset]
+            r = row + rowOffset
+            c = col + colOffset
+            if self.inBounds(r, c):
+                target = self.grid[r][c]
                 if target is None or target.colour != piece.colour:
-                    moves.append((row + rowOffset, col + colOffset))
+                    moves.append((r, c))
 
         return moves
 
@@ -92,28 +101,23 @@ class Board:
 
         # Check for each direction the piece can slide
         for rowDir, colDir in directions:
-
-            # Step to first square in this direction
-            curRow = row + rowDir
-            curCol = col + colDir
-
+            r = row + rowDir
+            c = col + colDir
+            
             # Keep moving until out of bounds/blocked
-            while self.inBounds(curRow, curCol):
-                target = self.grid[curRow][curCol]
+            while self.inBounds(r, c):
+                target = self.grid[r][c]
                 
-                if target is None:
-                    # Empty Square
-                    moves.append((curRow, curCol))
+                if target is None:          # Empty Square
+                    moves.append((r, c))
                 else:
-                    # Opponent piece
-                    if target.colour != piece.colour:
-                        moves.append((curRow, curCol))
-                    # Blocked by friendly piece
-                    break
+                    if target.colour != piece.colour:   # Opponent Piece
+                        moves.append((r, c))
+                    break                               # Blocked by Friendly Piece
                 
                 # Step to the next square in this direction
-                curRow += rowDir
-                curCol += colDir
+                r += rowDir
+                c += colDir
 
         return moves
     
@@ -123,10 +127,12 @@ class Board:
         moves = []
 
         for rowOffset, colOffset in KING_OFFSETS:
-            if self.inBounds(row + rowOffset, col + colOffset):
-                target = self.grid[row + rowOffset][col + colOffset]
+            r = row + rowOffset
+            c = col + colOffset
+            if self.inBounds(r, c):
+                target = self.grid[r][c]
                 if target is None or target.colour != piece.colour:
-                    moves.append((row + rowOffset, col + colOffset))
+                    moves.append((r, c))
 
         return moves
 
@@ -135,19 +141,8 @@ class Board:
         return (0 <= row < DIMENSION) and (0 <= col < DIMENSION)
     
     def isKingInCheck(self, colour):
+        # Checks if the player's king is in check
         kingSq = self.findKing(colour)
-
-        for row in range(DIMENSION):
-            for col in range(DIMENSION):
-
-                piece = self.grid[row][col]
-                if piece is None or piece.colour == colour:
-                    continue
-                 
-                attacks = self.generateAttacks(piece, (row, col))
-                
-                if kingSq in attacks:
-                    return True
                 
         return False
 
@@ -159,29 +154,3 @@ class Board:
                 if piece and piece.type == 'K' and piece.colour == colour:
                     return (row, col)
                 
-    def generateAttacks(self, piece, square):
-        # Calls appropriate attack generator function
-        match piece.type:
-            case 'P': return self.generatePawnAttacks(piece, square)
-            case 'N': return self.generateKnightMoves(piece, square)
-            case 'B': return self.generateSlidingMoves(piece, square, BISHOP_DIRECTIONS)
-            case 'R': return self.generateSlidingMoves(piece, square, ROOK_DIRECTIONS)
-            case 'Q': return self.generateSlidingMoves(piece, square, QUEEN_DIRECTIONS)
-            case 'K': return self.generateKingMoves(piece, square)
-
-    def generatePawnAttacks(self, piece, square):
-        # Generates the list of legal pawn moves
-        row, col = square
-        attacks = []
-
-        if piece.colour == 'w':
-            rowOffset = -1
-        else:
-            rowOffset = +1
-       
-        # Diagonal Captures
-        for colOffset in (-1, 1):
-            if self.inBounds(row + rowOffset, col + colOffset):
-                attacks.append((row + rowOffset, col + colOffset))
-
-        return attacks

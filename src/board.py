@@ -32,7 +32,10 @@ class Board:
         startRow, startCol = move.startSq
         endRow, endCol = move.endSq
 
+        move.pieceMoved = move.piece.moved
+
         self.grid[startRow][startCol] = None
+        move.pieceCaptured = self.grid[endRow][endCol]
         self.grid[endRow][endCol] = move.piece
 
         move.piece.moved = True

@@ -3,7 +3,8 @@ from board import Board
 from gui import Gui
 from constants import FPS, SQ_SIZE
 class Game:
-    """Main class
+    """
+    Main class
     - Tracks game state
     - Handles player inputs
     - Executes moves using board and updates turn
@@ -64,7 +65,6 @@ class Game:
             self.board.makeMove(self.pieceSq, self.targetSq)
             self.switchTurn()
             self.inCheck = self.board.isKingInCheck(self.turn)
-            print(self.inCheck)
 
             self.resetMoveData()
 

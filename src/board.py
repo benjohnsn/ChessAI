@@ -1,7 +1,14 @@
 from piece import Piece
+from board import Move
 from constants import DIMENSION, KNIGHT_OFFSETS, BISHOP_DIRECTIONS, ROOK_DIRECTIONS, QUEEN_DIRECTIONS, KING_OFFSETS
 
 class Board:
+    """
+    Represents the chess board and handles related logic
+    - Stores and updates the board (move/undo) using history
+    - Generates legal moves for each piece
+    - Check Detection
+    """
     def __init__(self):
         self.grid = [
             [Piece('b','R'), Piece('b','N'), Piece('b','B'), Piece('b','Q'), Piece('b','K'), Piece('b','B'), Piece('b','N'), Piece('b','R')],

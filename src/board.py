@@ -128,7 +128,7 @@ class Board:
             if self.inBounds(r, c):
                 target = self.grid[r][c]
                 if target is None or target.colour != piece.colour:
-                    move = Move(square, (r, c), piece, target, pieceMoved=piece.moved)
+                    move = Move(square, (r, c), piece, target, piece.moved)
                     moves.append(move)
 
         return moves
@@ -148,10 +148,12 @@ class Board:
                 target = self.grid[r][c]
                 
                 if target is None:          # Empty Square
-                    moves.append((r, c))
+                    move = Move(square, (r, c), piece, target, piece.moved)
+                    moves.append(move)
                 else:
                     if target.colour != piece.colour:   # Opponent Piece
-                        moves.append((r, c))
+                        move = Move(square, (r, c), piece, target, piece.moved)
+                        moves.append(move)
                     break                               # Blocked by Friendly Piece
                 
                 # Step to the next square in this direction

@@ -128,7 +128,8 @@ class Board:
             if self.inBounds(r, c):
                 target = self.grid[r][c]
                 if target is None or target.colour != piece.colour:
-                    moves.append((r, c))
+                    move = Move(square, (r, c), piece, target, pieceMoved=piece.moved)
+                    moves.append(move)
 
         return moves
 

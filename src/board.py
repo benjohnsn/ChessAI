@@ -6,8 +6,8 @@ class Board:
     """
     Represents the chess board and handles related logic
     - Stores and updates the board (move/undo) using history
-    - Generates legal moves for each piece
-    - Check Detection
+    - Generates pseudo-legal moves for each piece
+    - Filters for legal moves using check detection
     """
     def __init__(self):
         self.grid = [
@@ -27,7 +27,7 @@ class Board:
         row, col = square
         return self.grid[row][col]
     
-    def makeMove(self, pieceSq, targetSq):
+    def makeMove(self, pieceSq, targetSq, promotionType):
         # Moves piece to the target square and adds move to history
         startRow, startCol = pieceSq
         endRow, endCol = targetSq
@@ -61,12 +61,13 @@ class Board:
         legalMoves = []
 
         for move in pseudoLegalMoves:
-            self.makeMove(square, move)
+            for promotionType in ("Q", "R", "B", "N"):
+                self.makeMove(square, move, promotionType)
 
-            if not self.isKingInCheck(piece.colour):
-                legalMoves.append(move)
+                if not self.isKingInCheck(piece.colour):
+                    legalMoves.append(move)
 
-            self.undoMove()
+                self.undoMove()
 
         return legalMoves
 

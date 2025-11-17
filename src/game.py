@@ -62,7 +62,10 @@ class Game:
         
         # - If click is in the list of legal moves, make the move
         if self.targetSq in self.legalMoves:
-            self.board.makeMove(self.pieceSq, self.targetSq)
+
+            promotionType = self.checkPawnPromotion()
+
+            self.board.makeMove(self.pieceSq, self.targetSq, promotionType)
             self.switchTurn()
             self.inCheck = self.board.isKingInCheck(self.turn)
 
@@ -73,6 +76,12 @@ class Game:
         col = pos[0] // SQ_SIZE
         row = pos[1] // SQ_SIZE
         return (row, col)
+
+    def checkPawnPromotion(self):
+        piece = self.board.getPiece(self.pieceSq)
+        if piece.type == 'P':
+            if (piece.colour == 'w' and self.targetSq[0] == 0) or (piece.colour == 'b' and self.targetSq[0] == 7):
+                return input("Promotion (Q, R, B, N): ")
 
     def switchTurn(self):
         # Switches turns

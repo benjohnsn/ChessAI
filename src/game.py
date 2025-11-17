@@ -22,13 +22,14 @@ class Game:
         self.pieceSq = ()
         self.targetSq = ()
         self.legalMoves = []
+        self.targetSqs = []
         self.inCheck = False
 
     def run(self):
         # Main game loop: handles events, updates Gui and ticks clock
         while self.running:
             self.handleEvents()
-            self.gui.draw(self.board, self.pieceSq, self.legalMoves)
+            self.gui.draw(self.board, self.pieceSq, self.targetSqs)
             pygame.display.flip()
             self.clock.tick(FPS)
 
@@ -51,6 +52,7 @@ class Game:
         if piece and piece.colour == self.turn:
             self.pieceSq = square
             self.legalMoves = self.board.generateLegalMoves(piece, square)
+            self.targetSqs = [move.endSq for move in self.legalMoves]
             return
         
         # 2nd click
@@ -62,27 +64,20 @@ class Game:
         self.targetSq = square
         
         # - If click is in the list of legal moves, make the move
-        if self.targetSq in self.legalMoves:
+        for move in self.legalMoves: 
+            if self.targetSq == move.endSq:
 
-            promotionType = self.checkPawnPromotion()
+                self.board.makeMove(move)
+                self.switchTurn()
+                self.inCheck = self.board.isKingInCheck(self.turn)
 
-            self.board.makeMove(self.pieceSq, self.targetSq, promotionType)
-            self.switchTurn()
-            self.inCheck = self.board.isKingInCheck(self.turn)
-
-            self.resetMoveData()
+                self.resetMoveData()
 
     def getSquareFromPos(self, pos):
         # Converts mouse position to board coordinates
         col = pos[0] // SQ_SIZE
         row = pos[1] // SQ_SIZE
         return (row, col)
-
-    def checkPawnPromotion(self):
-        piece = self.board.getPiece(self.pieceSq)
-        if piece.type == 'P':
-            if (piece.colour == 'w' and self.targetSq[0] == 0) or (piece.colour == 'b' and self.targetSq[0] == 7):
-                return input("Promotion (Q, R, B, N): ")
 
     def switchTurn(self):
         # Switches turns

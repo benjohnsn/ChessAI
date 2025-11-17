@@ -66,7 +66,7 @@ class Game:
         for move in self.legalMoves: 
             if self.targetSq == move.endSq:
 
-                self.checkPawnPromotion(piece, move)
+                self.checkPawnPromotion(move)
 
                 self.board.makeMove(move)
                 self.switchTurn()
@@ -84,7 +84,7 @@ class Game:
         # Adds promotion type to the move
         if move.piece and move.piece.type == 'P':
             if (move.piece.colour == 'w' and move.endSq[0] == 0) or (move.piece.colour == 'b' and move.endSq[0] == 7):
-                promotionType = input("Promotion (Q, R, B, N)")
+                promotionType = input("Promotion (Q, R, B, N): ")
                 move.promotionType = promotionType
 
     def switchTurn(self):

@@ -33,7 +33,11 @@ class Board:
         endRow, endCol = move.endSq
 
         self.grid[startRow][startCol] = None
-        self.grid[endRow][endCol] = move.piece
+        if move.promotionType:
+            piece = Piece(move.piece.colour, move.promotionType)
+            self.grid[endRow][endCol] = piece
+        else:
+            self.grid[endRow][endCol] = move.piece
 
         move.pieceMoved = move.piece.moved
         move.piece.moved = True

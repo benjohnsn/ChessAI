@@ -23,7 +23,6 @@ class Game:
         self.targetSq = ()
         self.legalMoves = []
         self.targetSqs = []
-        self.inCheck = False
 
     def run(self):
         # Main game loop: handles events, updates Gui and ticks clock
@@ -67,18 +66,37 @@ class Game:
         for move in self.legalMoves: 
             if self.targetSq == move.endSq:
 
+                self.checkPawnPromotion(move)
+
                 self.board.makeMove(move)
                 self.switchTurn()
-                self.inCheck = self.board.isKingInCheck(self.turn)
 
                 self.resetMoveData()
+                return
 
     def getSquareFromPos(self, pos):
         # Converts mouse position to board coordinates
         col = pos[0] // SQ_SIZE
         row = pos[1] // SQ_SIZE
         return (row, col)
+    
+    def checkPawnPromotion(self, move):
+        # Checks if the move is a pawn attempting to promote
+        # Adds promotion type to the move
 
+        # if no piece or not a pawn
+        if move.piece.type != 'P':
+            return
+
+        if (move.piece.colour == 'w' and move.endSq[0] == 0) or (move.piece.colour == 'b' and move.endSq[0] == 7):
+            while True:
+                promotionType = input("Promotion! (Q, R, B, N): ").upper()
+                if promotionType in ('Q', 'R', 'B', 'N'):
+                    move.promotionType = promotionType
+                    return
+                else:
+                    print("Invalid Piece")
+                    
     def switchTurn(self):
         # Switches turns
         if self.turn == 'w':

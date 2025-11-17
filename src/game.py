@@ -84,8 +84,14 @@ class Game:
         # Adds promotion type to the move
         if move.piece and move.piece.type == 'P':
             if (move.piece.colour == 'w' and move.endSq[0] == 0) or (move.piece.colour == 'b' and move.endSq[0] == 7):
-                promotionType = input("Promotion (Q, R, B, N): ")
-                move.promotionType = promotionType
+                while True:
+                    promotionType = input("Promotion! (Q, R, B, N): ").upper()
+                    if promotionType in ('Q', 'R', 'B', 'N'):
+                        move.promotionType = promotionType
+                        break
+                    else:
+                        print("Invalid Piece")
+                    
 
     def switchTurn(self):
         # Switches turns

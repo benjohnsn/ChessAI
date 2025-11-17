@@ -1,6 +1,7 @@
 import pygame
-from board import Board
 from gui import Gui
+from board import Board
+from move import Move
 from constants import FPS, SQ_SIZE
 class Game:
     """

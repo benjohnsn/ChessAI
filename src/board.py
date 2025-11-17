@@ -28,15 +28,20 @@ class Board:
         return self.grid[row][col]
     
     def makeMove(self, pieceSq, targetSq):
-        # Moves piece to the target square
+        # Moves piece to the target square and adds move to history
         startRow, startCol = pieceSq
         endRow, endCol = targetSq
 
         piece = self.grid[startRow][startCol]
-        piece.moved = True
+        target = self.grid[endRow][endCol]
 
+        move = Move(pieceSq, targetSq, piece, target, False, None, False, piece.Moved)
+
+        piece.moved = True
         self.grid[endRow][endCol] = piece
         self.grid[startRow][startCol] = None
+
+        self.history.append(move)
 
     def undoMove():
         # Undoes a move using history

@@ -60,13 +60,13 @@ class Board:
         legalMoves = []
 
         for move in pseudoLegalMoves:
-            for promotionType in ("Q", "R", "B", "N"):
-                self.makeMove(square, move, promotionType)
 
-                if not self.isKingInCheck(piece.colour):
-                    legalMoves.append(move)
+            self.makeMove(move)
 
-                self.undoMove()
+            if not self.isKingInCheck(piece.colour):
+                legalMoves.append(move)
+
+            self.undoMove()
 
         return legalMoves
 

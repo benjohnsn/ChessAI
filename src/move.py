@@ -15,7 +15,7 @@ class Move:
         self.isCastle = isCastle
         self.isEnPassant = isEnPassant
 
-        self.PieceMoved = pieceMoved
+        self.pieceMoved = pieceMoved
 
     def __repr__(self):
         return f"Move({self.startSq}->{self.endSq}, {self.piece.type})"

@@ -1,5 +1,5 @@
 from piece import Piece
-from board import Move
+from move import Move
 from constants import DIMENSION, KNIGHT_OFFSETS, BISHOP_DIRECTIONS, ROOK_DIRECTIONS, QUEEN_DIRECTIONS, KING_OFFSETS
 
 class Board:
@@ -35,7 +35,7 @@ class Board:
         piece = self.grid[startRow][startCol]
         target = self.grid[endRow][endCol]
 
-        move = Move(pieceSq, targetSq, piece, target, False, None, False, piece.Moved)
+        move = Move(pieceSq, targetSq, piece, target, False, None, False, piece.moved)
 
         piece.moved = True
         self.grid[endRow][endCol] = piece
@@ -54,7 +54,6 @@ class Board:
         self.grid[endRow][endCol] = move.pieceCaptured
 
         move.piece.moved = move.pieceMoved
-
 
     def generateLegalMoves(self, piece, square):
         # Generates the list of legal Moves

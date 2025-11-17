@@ -27,19 +27,15 @@ class Board:
         row, col = square
         return self.grid[row][col]
     
-    def makeMove(self, pieceSq, targetSq, promotionType):
-        # Moves piece to the target square and adds move to history
-        startRow, startCol = pieceSq
-        endRow, endCol = targetSq
+    def makeMove(self, move):
+        # Executes a move object on the board and pushes it to history
+        startRow, startCol = move.startSq
+        endRow, endCol = move.endSq
 
-        piece = self.grid[startRow][startCol]
-        target = self.grid[endRow][endCol]
-
-        move = Move(pieceSq, targetSq, piece, target, False, None, False, piece.moved)
-
-        piece.moved = True
-        self.grid[endRow][endCol] = piece
         self.grid[startRow][startCol] = None
+        self.grid[endRow][endCol] = move.piece
+
+        move.piece.moved = True
 
         self.history.append(move)
 

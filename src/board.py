@@ -13,6 +13,7 @@ class Board:
             [Piece('w','P') for _ in range(8)],
             [Piece('w','R'), Piece('w','N'), Piece('w','B'), Piece('w','Q'), Piece('w','K'), Piece('w','B'), Piece('w','N'), Piece('w','R')]
         ]
+        self.history = []
 
     def getPiece(self, square):
         # Returns piece at square
@@ -29,6 +30,25 @@ class Board:
 
         self.grid[endRow][endCol] = piece
         self.grid[startRow][startCol] = None
+
+    def undoMove():
+        # Undoes a move using history
+        pass
+
+    def generateLegalMoves(self, piece, square):
+        # Generates the list of legal Moves
+        pseudoLegalMoves = self.generatePseudoLegalMoves(piece, square)
+        legalMoves = []
+
+        for move in pseudoLegalMoves:
+            self.makeMove(square)
+
+            if not self.isKingInCheck(piece.colour):
+                legalMoves.append(move)
+
+            self.undoMove()
+
+        return legalMoves
 
     def generatePseudoLegalMoves(self, piece, square):
         # Calls appropriate move generator function

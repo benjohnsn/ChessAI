@@ -17,9 +17,9 @@ class Game:
         self.gui = Gui()
         self.board = Board()
         self.turn = 'w'
-        self.pieceSq = ()
-        self.targetSq = ()
-        self.legalMoves = []
+        self.pieceSq = None
+        self.targetSq = None
+        self.legalMoves = None
         self.inCheck = False
 
     def run(self):
@@ -53,7 +53,7 @@ class Game:
         
         # 2nd click
         # - If no valid first click, return
-        if not self.pieceSq:
+        if self.pieceSq is None:
             return
         
         # - Assign 2nd click because it must be empty/opponent square
@@ -82,6 +82,6 @@ class Game:
 
     def resetMoveData(self):
         # Reset selected squares
-        self.pieceSq = ()
-        self.targetSq = ()
-        self.legalMoves = []
+        self.pieceSq = None
+        self.targetSq = None
+        self.legalMoves = None

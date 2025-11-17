@@ -82,17 +82,20 @@ class Game:
     def checkPawnPromotion(self, move):
         # Checks if the move is a pawn attempting to promote
         # Adds promotion type to the move
-        if move.piece and move.piece.type == 'P':
-            if (move.piece.colour == 'w' and move.endSq[0] == 0) or (move.piece.colour == 'b' and move.endSq[0] == 7):
-                while True:
-                    promotionType = input("Promotion! (Q, R, B, N): ").upper()
-                    if promotionType in ('Q', 'R', 'B', 'N'):
-                        move.promotionType = promotionType
-                        break
-                    else:
-                        print("Invalid Piece")
-                    
 
+        # if no piece or not a pawn
+        if move.piece.type != 'P':
+            return
+
+        if (move.piece.colour == 'w' and move.endSq[0] == 0) or (move.piece.colour == 'b' and move.endSq[0] == 7):
+            while True:
+                promotionType = input("Promotion! (Q, R, B, N): ").upper()
+                if promotionType in ('Q', 'R', 'B', 'N'):
+                    move.promotionType = promotionType
+                    return
+                else:
+                    print("Invalid Piece")
+                    
     def switchTurn(self):
         # Switches turns
         if self.turn == 'w':

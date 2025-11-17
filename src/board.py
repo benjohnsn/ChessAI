@@ -95,25 +95,27 @@ class Board:
         if self.inBounds(r, c):
             target = self.grid[r][c]
             if target is None:
-                moves.append((r,c))
+                move = Move(square, (r, c), piece, target, piece.moved)
+                moves.append(move)
                 
-                r = row + (rowOffset * 2)
+                r2 = row + (rowOffset * 2)
 
                 # Forward two squares (only if pawn has not moved)
-                if self.inBounds(r, c):
+                if self.inBounds(r2, c):
                     if not piece.moved:
-                        target = self.grid[r][c]
+                        target = self.grid[r2][c]
                         if target is None:
-                            moves.append((r, c))
+                            move = Move(square, (r2, c), piece, target, piece.moved)
+                            moves.append(move)
 
         # Diagonal Captures
         for colOffset in (-1, 1):
-            r = row + rowOffset
             c = col + colOffset
-            if self.inBounds(row + rowOffset, col + colOffset):
-                target = self.grid[row + rowOffset][col + colOffset]
+            if self.inBounds(r, c):
+                target = self.grid[r][c]
                 if target and target.colour != piece.colour:
-                    moves.append((row + rowOffset, col + colOffset))
+                    move = Move(square, (r, c), piece, target, piece.moved)
+                    moves.append(move)
 
         return moves
 
@@ -173,7 +175,8 @@ class Board:
             if self.inBounds(r, c):
                 target = self.grid[r][c]
                 if target is None or target.colour != piece.colour:
-                    moves.append((r, c))
+                    move = Move(square, (r, c), piece, target, piece.moved)
+                    moves.append(move)
 
         return moves
 

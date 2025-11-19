@@ -225,6 +225,18 @@ class Board:
                     move = Move(square, (r, c), piece, target, piece.moved)
                     moves.append(move)
 
+        if piece.moved == False and not self.isKingInCheck(piece.colour):
+            if piece.colour == 'w':
+                if self.grid[7][7] and self.grid[7][7].type == 'R' and self.grid[7][7].colour == piece.colour and self.grid[7][7].moved == False:
+                    pass
+                if self.grid[7][0] and self.grid[7][0].type == 'R' and self.grid[7][0].colour == piece.colour and self.grid[7][0].moved == False:
+                    pass
+            else:
+                if self.grid[0][7] and self.grid[0][7].type == 'R' and self.grid[0][7].colour == piece.colour and self.grid[0][7].moved == False:
+                    pass
+                if self.grid[0][0] and self.grid[0][0].type == 'R' and self.grid[0][0].colour == piece.colour and self.grid[0][0].moved == False:
+                    pass
+
         return moves
 
 

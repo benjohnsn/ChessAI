@@ -141,6 +141,7 @@ class Board:
                             move = Move(square, (r2, c), piece, target, piece.moved)
                             moves.append(move)
 
+
         # Diagonal Captures
         for colOffset in (-1, 1):
             c = col + colOffset
@@ -148,6 +149,11 @@ class Board:
                 target = self.grid[r][c]
                 if target and target.colour != piece.colour:
                     move = Move(square, (r, c), piece, target, piece.moved)
+                    moves.append(move)
+            if self.inBounds(row, c): 
+                target = self.grid[row][c] 
+                if target and target.colour != piece.colour and target.enPassantTarget == True: 
+                    move = Move(square, (r, c), piece, target, piece.moved, isEnPassant= True) 
                     moves.append(move)
 
         return moves

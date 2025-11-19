@@ -18,11 +18,13 @@ class Gui:
         self.colours = [pygame.Color(LIGHT_COL), pygame.Color(DARK_COL)]
         self.highlightColours = [pygame.Color(SELECTION_HIGHLIGHT_COL), pygame.Color(TARGET_HIGHLIGHT_COL)]
 
+
     def loadImages(self):
         # Loads piece images from images folder and scales them to square size
         pieces = ['wP', 'wR', 'wN', 'wB', 'wQ', 'wK', 'bP', 'bR', 'bN', 'bB', 'bQ', 'bK']
         for piece in pieces:
             self.images[piece] = pygame.transform.scale(pygame.image.load("images/" + piece  + ".png"), (SQ_SIZE, SQ_SIZE))
+    
     
     def draw(self, board, highlightSq, targetSqs):
         # Draws chess board

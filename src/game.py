@@ -24,6 +24,7 @@ class Game:
         self.legalMoves = []
         self.targetSqs = []
 
+
     def run(self):
         # Main game loop: handles events, updates Gui and ticks clock
         while self.running:
@@ -32,6 +33,7 @@ class Game:
             pygame.display.flip()
             self.clock.tick(FPS)
 
+
     def handleEvents(self):
         # Handles pygame events: quit, mouse click
         for event in pygame.event.get():
@@ -39,6 +41,7 @@ class Game:
                 self.running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 self.handleClick(pygame.mouse.get_pos())
+
 
     def handleClick(self, pos):
         # Handles player click
@@ -74,17 +77,19 @@ class Game:
                 self.resetMoveData()
                 return
 
+
     def getSquareFromPos(self, pos):
         # Converts mouse position to board coordinates
         col = pos[0] // SQ_SIZE
         row = pos[1] // SQ_SIZE
         return (row, col)
     
+
     def checkPawnPromotion(self, move):
         # Checks if the move is a pawn attempting to promote
         # Adds promotion type to the move
 
-        # if no piece or not a pawn
+        # If no piece or not a pawn
         if move.piece.type != 'P':
             return
 
@@ -96,13 +101,11 @@ class Game:
                     return
                 else:
                     print("Invalid Piece")
-                    
+
+
     def switchTurn(self):
         # Switches turns
-        if self.turn == 'w':
-            self.turn = 'b'
-        else:
-             self.turn = 'w'
+        self.turn = 'b' if self.turn == 'w' else 'w'
 
     def resetMoveData(self):
         # Reset selected squares

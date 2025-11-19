@@ -21,6 +21,7 @@ class Board:
             [Piece('w','R'), Piece('w','N'), Piece('w','B'), Piece('w','Q'), Piece('w','K'), Piece('w','B'), Piece('w','N'), Piece('w','R')]
         ]
         self.history = []
+        self.enPassantTargetSq = ()
 
     def getPiece(self, square):
         # Returns piece at square
@@ -32,17 +33,46 @@ class Board:
         startRow, startCol = move.startSq
         endRow, endCol = move.endSq
 
+        if self.enPassantTargetSq:
+            self.resetEnPassantTarget()
+
         self.grid[startRow][startCol] = None
         if move.promotionType:
             piece = Piece(move.piece.colour, move.promotionType)
             self.grid[endRow][endCol] = piece
+        elif move.isEnPassant:
+            capRow = endRow + (1 if move.piece.colour == 'w' else -1)
+            self.grid[capRow][endCol] = None
+            self.grid[endRow][endCol] = move.piece     
         else:
             self.grid[endRow][endCol] = move.piece
 
         move.pieceMoved = move.piece.moved
         move.piece.moved = True
 
+        self.setEnPassantTarget(move, startRow, endRow)
+
         self.history.append(move)
+
+
+    def resetEnPassantTarget(self):
+        # Resets the enPassantTarget Flag
+        row, col = self.enPassantTargetSq
+        piece = self.grid[row][col]
+
+        if piece and piece.type == 'P':
+            piece.enPassantTarget = False
+        
+        self.enPassantTargetSq = ()
+
+
+    def setEnPassantTarget(self, move, startRow, endRow):
+        # Sets the enPassantTarget flag
+        if move.piece.type == 'P':
+            if abs(startRow - endRow) == 2:
+                move.piece.enPassantTarget = True
+                self.enPassantTargetSq = move.endSq
+
 
     def undoMove(self):
         # Undoes a move using history
@@ -52,9 +82,15 @@ class Board:
         endRow, endCol = move.endSq
 
         self.grid[startRow][startCol] = move.piece
-        self.grid[endRow][endCol] = move.pieceCaptured
+        if move.isEnPassant:
+            self.grid[endRow][endCol] = None
+            capRow = endRow + (-1 if move.piece.colour == 'b' else 1)
+            self.grid[capRow][endCol] = move.pieceCaptured
+        else:
+            self.grid[endRow][endCol] = move.pieceCaptured
 
         move.piece.moved = move.pieceMoved
+
 
     def generateLegalMoves(self, piece, square):
         # Generates the list of legal Moves
@@ -62,7 +98,6 @@ class Board:
         legalMoves = []
 
         for move in pseudoLegalMoves:
-
             self.makeMove(move)
 
             if not self.isKingInCheck(piece.colour):
@@ -71,6 +106,7 @@ class Board:
             self.undoMove()
 
         return legalMoves
+
 
     def generatePseudoLegalMoves(self, piece, square):
         # Calls appropriate move generator function
@@ -82,16 +118,14 @@ class Board:
             case 'Q': return self.generateSlidingMoves(piece, square, QUEEN_DIRECTIONS)
             case 'K': return self.generateKingMoves(piece, square)
 
+
     def generatePawnMoves(self, piece, square):
         # Generates the list of legal pawn moves
         row, col = square
         moves = []
 
-        if piece.colour == 'w':
-            rowOffset = -1
-        else:
-            rowOffset = +1
-
+        rowOffset = -1 if piece.colour == 'w' else 1
+            
         r = row + rowOffset
         c = col
 
@@ -112,6 +146,7 @@ class Board:
                             move = Move(square, (r2, c), piece, target, piece.moved)
                             moves.append(move)
 
+
         # Diagonal Captures
         for colOffset in (-1, 1):
             c = col + colOffset
@@ -120,8 +155,14 @@ class Board:
                 if target and target.colour != piece.colour:
                     move = Move(square, (r, c), piece, target, piece.moved)
                     moves.append(move)
+            if self.inBounds(row, c): 
+                target = self.grid[row][c] 
+                if target and target.colour != piece.colour and target.enPassantTarget == True: 
+                    move = Move(square, (r, c), piece, target, piece.moved, isEnPassant=True) 
+                    moves.append(move)
 
         return moves
+
 
     def generateKnightMoves(self, piece, square):
         # Generates the list of legal Knight moves
@@ -138,6 +179,7 @@ class Board:
                     moves.append(move)
 
         return moves
+
 
     def generateSlidingMoves(self, piece, square, directions):
         # Generates the list of sliding moves given a list of directions
@@ -168,6 +210,7 @@ class Board:
 
         return moves
     
+
     def generateKingMoves(self, piece, square):
         # Generate the list of legal King Moves
         row, col = square
@@ -184,24 +227,20 @@ class Board:
 
         return moves
 
+
     def inBounds(self, row, col):
         # Checks if square is on the board
         return (0 <= row < DIMENSION) and (0 <= col < DIMENSION)
     
+
     def isKingInCheck(self, colour):
         # Checks if the player's king is in check
         kingRow, kingCol = self.findKing(colour)
 
-        if colour == 'w':
-            enemy = 'b'
-        else:
-            enemy = 'w'
-
+        enemy = 'b' if colour == 'w' else 'w'
+            
         # Pawn Attacks
-        if colour == 'w':
-            rowOffset = -1
-        else:
-            rowOffset = +1
+        rowOffset = -1 if colour == 'w' else 1    
 
         for colOffset in (-1, 1):
             r = kingRow + rowOffset
@@ -262,6 +301,7 @@ class Board:
                     return True
                 
         return False
+
 
     def findKing(self, colour):
         # Iterates through the board to find the player's king

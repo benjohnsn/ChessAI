@@ -105,11 +105,7 @@ class Game:
 
     def switchTurn(self):
         # Switches turns
-        if self.turn == 'w':
-            self.turn = 'b'
-        else:
-             self.turn = 'w'
-
+        self.turn = 'b' if self.turn == 'w' else 'w'
 
     def resetMoveData(self):
         # Reset selected squares

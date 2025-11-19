@@ -69,9 +69,9 @@ class Board:
     def setEnPassantTarget(self, move, startRow, endRow):
         # Sets the enPassantTarget flag
         if move.piece.type == 'P':
-                if abs(startRow - endRow) == 2:
-                    move.piece.enPassantTarget = True
-                    self.enPassantTargetSq = move.endSq
+            if abs(startRow - endRow) == 2:
+                move.piece.enPassantTarget = True
+                self.enPassantTargetSq = move.endSq
 
 
     def undoMove(self):
@@ -82,7 +82,12 @@ class Board:
         endRow, endCol = move.endSq
 
         self.grid[startRow][startCol] = move.piece
-        self.grid[endRow][endCol] = move.pieceCaptured
+        if move.isEnPassant:
+            self.grid[endRow][endCol] = None
+            capRow = endRow + (-1 if move.piece.colour == 'b' else 1)
+            self.grid[capRow][endCol] = move.pieceCaptured
+        else:
+            self.grid[endRow][endCol] = move.pieceCaptured
 
         move.piece.moved = move.pieceMoved
 
@@ -93,7 +98,6 @@ class Board:
         legalMoves = []
 
         for move in pseudoLegalMoves:
-
             self.makeMove(move)
 
             if not self.isKingInCheck(piece.colour):
@@ -120,11 +124,8 @@ class Board:
         row, col = square
         moves = []
 
-        if piece.colour == 'w':
-            rowOffset = -1
-        else:
-            rowOffset = +1
-
+        rowOffset = -1 if piece.colour == 'w' else 1
+            
         r = row + rowOffset
         c = col
 
@@ -157,7 +158,7 @@ class Board:
             if self.inBounds(row, c): 
                 target = self.grid[row][c] 
                 if target and target.colour != piece.colour and target.enPassantTarget == True: 
-                    move = Move(square, (r, c), piece, target, piece.moved, isEnPassant= True) 
+                    move = Move(square, (r, c), piece, target, piece.moved, isEnPassant=True) 
                     moves.append(move)
 
         return moves
@@ -236,16 +237,10 @@ class Board:
         # Checks if the player's king is in check
         kingRow, kingCol = self.findKing(colour)
 
-        if colour == 'w':
-            enemy = 'b'
-        else:
-            enemy = 'w'
-
+        enemy = 'b' if colour == 'w' else 'w'
+            
         # Pawn Attacks
-        if colour == 'w':
-            rowOffset = -1
-        else:
-            rowOffset = +1
+        rowOffset = -1 if colour == 'w' else 1    
 
         for colOffset in (-1, 1):
             r = kingRow + rowOffset

@@ -21,6 +21,7 @@ class Board:
             [Piece('w','R'), Piece('w','N'), Piece('w','B'), Piece('w','Q'), Piece('w','K'), Piece('w','B'), Piece('w','N'), Piece('w','R')]
         ]
         self.history = []
+        self.enPassantTargetSq = ()
 
     def getPiece(self, square):
         # Returns piece at square
@@ -32,6 +33,9 @@ class Board:
         startRow, startCol = move.startSq
         endRow, endCol = move.endSq
 
+        if self.enPassantTargetSq:
+            self.resetEnPassantTarget()
+
         self.grid[startRow][startCol] = None
         if move.promotionType:
             piece = Piece(move.piece.colour, move.promotionType)
@@ -42,7 +46,29 @@ class Board:
         move.pieceMoved = move.piece.moved
         move.piece.moved = True
 
+        self.setEnPassantTarget(move, startRow, endRow)
+
         self.history.append(move)
+
+
+    def resetEnPassantTarget(self):
+        # Resets the enPassantTarget Flag
+        row, col = self.enPassantTargetSq
+        piece = self.grid[row][col]
+
+        if piece and piece.type == 'P':
+            piece.enPassantTarget = False
+        
+        self.enPassantTargetSq = ()
+
+
+    def setEnPassantTarget(self, move, startRow, endRow):
+        # Sets the enPassantTarget flag
+        if move.piece.type == 'P':
+                if abs(startRow - endRow) == 2:
+                    move.piece.enPassantTarget = True
+                    self.enPassantTargetSq = move.endSq
+
 
     def undoMove(self):
         # Undoes a move using history
@@ -55,6 +81,7 @@ class Board:
         self.grid[endRow][endCol] = move.pieceCaptured
 
         move.piece.moved = move.pieceMoved
+
 
     def generateLegalMoves(self, piece, square):
         # Generates the list of legal Moves
@@ -72,6 +99,7 @@ class Board:
 
         return legalMoves
 
+
     def generatePseudoLegalMoves(self, piece, square):
         # Calls appropriate move generator function
         match piece.type:
@@ -81,6 +109,7 @@ class Board:
             case 'R': return self.generateSlidingMoves(piece, square, ROOK_DIRECTIONS)
             case 'Q': return self.generateSlidingMoves(piece, square, QUEEN_DIRECTIONS)
             case 'K': return self.generateKingMoves(piece, square)
+
 
     def generatePawnMoves(self, piece, square):
         # Generates the list of legal pawn moves
@@ -123,6 +152,7 @@ class Board:
 
         return moves
 
+
     def generateKnightMoves(self, piece, square):
         # Generates the list of legal Knight moves
         row, col = square
@@ -138,6 +168,7 @@ class Board:
                     moves.append(move)
 
         return moves
+
 
     def generateSlidingMoves(self, piece, square, directions):
         # Generates the list of sliding moves given a list of directions
@@ -168,6 +199,7 @@ class Board:
 
         return moves
     
+
     def generateKingMoves(self, piece, square):
         # Generate the list of legal King Moves
         row, col = square
@@ -184,10 +216,12 @@ class Board:
 
         return moves
 
+
     def inBounds(self, row, col):
         # Checks if square is on the board
         return (0 <= row < DIMENSION) and (0 <= col < DIMENSION)
     
+
     def isKingInCheck(self, colour):
         # Checks if the player's king is in check
         kingRow, kingCol = self.findKing(colour)
@@ -262,6 +296,7 @@ class Board:
                     return True
                 
         return False
+
 
     def findKing(self, colour):
         # Iterates through the board to find the player's king

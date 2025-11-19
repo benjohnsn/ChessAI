@@ -40,6 +40,10 @@ class Board:
         if move.promotionType:
             piece = Piece(move.piece.colour, move.promotionType)
             self.grid[endRow][endCol] = piece
+        elif move.isEnPassant:
+            capRow = endRow + (1 if move.piece.colour == 'w' else -1)
+            self.grid[capRow][endCol] = None
+            self.grid[endRow][endCol] = move.piece     
         else:
             self.grid[endRow][endCol] = move.piece
 

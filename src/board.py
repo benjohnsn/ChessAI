@@ -84,7 +84,7 @@ class Board:
         self.grid[startRow][startCol] = move.piece
         if move.isEnPassant:
             self.grid[endRow][endCol] = None
-            capRow = endRow + (-1 if move.piece.colour == 'b' else 1)
+            capRow = endRow + (1 if move.piece.colour == 'w' else -1)
             self.grid[capRow][endCol] = move.pieceCaptured
         else:
             self.grid[endRow][endCol] = move.pieceCaptured

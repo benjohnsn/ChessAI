@@ -247,16 +247,30 @@ class Board:
 
     def isKingInCheck(self, colour):
         # Checks if the player's king is in check
-        kingRow, kingCol = self.findKing(colour)
-
+        square = self.findKing(colour)
         enemy = 'b' if colour == 'w' else 'w'
+        return self.squareAttacked(square, enemy)
             
+            
+    def findKing(self, colour):
+    # Iterates through the board to find the player's king
+        for row in range(DIMENSION):
+            for col in range(DIMENSION):
+                piece = self.grid[row][col]
+                if piece and piece.type == 'K' and piece.colour == colour:
+                    return (row, col)
+
+
+    def squareAttacked(self, square, enemy):
+        # Checks if a square is attacked by the enemy
+        row, col = square
+
         # Pawn Attacks
-        rowOffset = -1 if colour == 'w' else 1    
+        rowOffset = 1 if enemy == 'w' else -1    
 
         for colOffset in (-1, 1):
-            r = kingRow + rowOffset
-            c = kingCol + colOffset
+            r = row + rowOffset
+            c = col + colOffset
             if self.inBounds(r, c):
                 piece = self.grid[r][c]
                 if piece and piece.colour == enemy and piece.type == 'P':
@@ -264,8 +278,8 @@ class Board:
         
         # Knight Attacks
         for rowOffset, colOffset in KNIGHT_OFFSETS:
-            r = kingRow + rowOffset
-            c = kingCol + colOffset
+            r = row + rowOffset
+            c = col + colOffset
             if self.inBounds(r, c):
                 piece = self.grid[r][c]
                 if piece and piece.colour == enemy and piece.type == 'N':
@@ -273,8 +287,8 @@ class Board:
 
         # Rook and Queen Attacks (straight lines) 
         for rowDir, colDir in ROOK_DIRECTIONS:
-            r = kingRow + rowDir
-            c = kingCol + colDir
+            r = row + rowDir
+            c = col + colDir
 
             while self.inBounds(r, c):
                 piece = self.grid[r][c]
@@ -289,8 +303,8 @@ class Board:
 
         # Bishop and Queen Attacks (diagonal lines)
         for rowDir, colDir in BISHOP_DIRECTIONS:
-            r = kingRow + rowDir
-            c = kingCol + colDir
+            r = row + rowDir
+            c = col + colDir
 
             while self.inBounds(r, c):
                 piece = self.grid[r][c]
@@ -305,21 +319,12 @@ class Board:
 
         # King Attacks
         for rowOffset, colOffset in KING_OFFSETS:
-            r = kingRow + rowOffset
-            c = kingCol + colOffset
+            r = row + rowOffset
+            c = col + colOffset
             if self.inBounds(r, c):
                 piece = self.grid[r][c]
                 if piece and piece.colour == enemy and piece.type == 'K':
                     return True
                 
         return False
-
-
-    def findKing(self, colour):
-        # Iterates through the board to find the player's king
-        for row in range(DIMENSION):
-            for col in range(DIMENSION):
-                piece = self.grid[row][col]
-                if piece and piece.type == 'K' and piece.colour == colour:
-                    return (row, col)
                 

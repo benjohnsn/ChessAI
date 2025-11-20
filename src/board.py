@@ -43,7 +43,27 @@ class Board:
         elif move.isEnPassant:
             capRow = endRow + (1 if move.piece.colour == 'w' else -1)
             self.grid[capRow][endCol] = None
-            self.grid[endRow][endCol] = move.piece     
+            self.grid[endRow][endCol] = move.piece
+        elif move.isCastle:
+            self.grid[endRow][endCol] = move.piece
+            if move.piece.colour == 'w':
+                if move.kingSide == True:
+                    self.grid[7][5] = self.grid[7][7]
+                    self.grid[7][7] = None
+                    self.grid[7][5].moved = True
+                else:
+                    self.grid[7][3] = self.grid[7][0]
+                    self.grid[7][0] = None
+                    self.grid[7][3].moved = True
+            else:
+                if move.kingSide == True:
+                    self.grid[0][5] = self.grid[0][7]
+                    self.grid[0][7] = None
+                    self.grid[0][5].moved = True
+                else:
+                    self.grid[0][3] = self.grid[0][0]
+                    self.grid[0][0] = None
+                    self.grid[0][3].moved = True
         else:
             self.grid[endRow][endCol] = move.piece
 

@@ -227,15 +227,35 @@ class Board:
 
         if piece.moved == False and not self.isKingInCheck(piece.colour):
             if piece.colour == 'w':
-                if self.grid[7][7] and self.grid[7][7].type == 'R' and self.grid[7][7].colour == piece.colour and self.grid[7][7].moved == False:
-                    pass
-                if self.grid[7][0] and self.grid[7][0].type == 'R' and self.grid[7][0].colour == piece.colour and self.grid[7][0].moved == False:
-                    pass
+
+                cornerPiece = self.grid[7][7]
+                if cornerPiece and cornerPiece.type == 'R' and cornerPiece.colour == piece.colour and cornerPiece.moved == False:
+                    if self.grid[7][5] is None and self.grid[7][6] is None:
+                        if not self.squareAttacked((7, 5), 'b') and not self.squareAttacked((7, 6), 'b'):
+                            move = Move(square, (7, 6), piece, None, piece.moved, isCastle=True, kingSide=True)
+                            moves.append(move)
+
+                cornerPiece = self.grid[7][0]
+                if cornerPiece and cornerPiece.type == 'R' and cornerPiece.colour == piece.colour and cornerPiece.moved == False:
+                    if self.grid[7][3] is None and self.grid[7][2] is None and self.grid[7][1] is None:
+                        if not self.squareAttacked((7, 3), 'b') and not self.squareAttacked((7, 2), 'b'):
+                            move = Move(square, (7, 2), piece, None, piece.moved, isCastle=True)
+                            moves.append(move)
             else:
-                if self.grid[0][7] and self.grid[0][7].type == 'R' and self.grid[0][7].colour == piece.colour and self.grid[0][7].moved == False:
-                    pass
-                if self.grid[0][0] and self.grid[0][0].type == 'R' and self.grid[0][0].colour == piece.colour and self.grid[0][0].moved == False:
-                    pass
+                
+                cornerPiece = self.grid[0][7]
+                if cornerPiece and cornerPiece.type == 'R' and cornerPiece.colour == piece.colour and cornerPiece.moved == False:
+                    if self.grid[0][5] is None and self.grid[0][6] is None:
+                        if not self.squareAttacked((0, 5), 'w') and not self.squareAttacked((0, 6), 'w'):
+                            move = Move(square, (0, 6), piece, None, piece.moved, isCastle=True, kingSide=True)
+                            moves.append(move)
+
+                cornerPiece = self.grid[0][0]
+                if cornerPiece and cornerPiece.type == 'R' and cornerPiece.colour == piece.colour and cornerPiece.moved == False:
+                    if self.grid[0][3] is None and self.grid[0][2] is None and self.grid[0][1] is None:
+                        if not self.squareAttacked((0, 3), 'w') and not self.squareAttacked((0, 2), 'w'):
+                            move = Move(square, (0, 2), piece, None, piece.moved, isCastle=True)
+                            moves.append(move)
 
         return moves
 
@@ -251,7 +271,7 @@ class Board:
         enemy = 'b' if colour == 'w' else 'w'
         return self.squareAttacked(square, enemy)
             
-            
+
     def findKing(self, colour):
     # Iterates through the board to find the player's king
         for row in range(DIMENSION):

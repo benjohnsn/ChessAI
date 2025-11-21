@@ -19,7 +19,6 @@ class Move:
 
         self.isCastle = isCastle
         self.kingSide = kingSide
-        self.rookMoved = rookMoved
 
 
     def __repr__(self):

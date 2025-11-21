@@ -106,6 +106,26 @@ class Board:
             self.grid[endRow][endCol] = None
             capRow = endRow + (1 if move.piece.colour == 'w' else -1)
             self.grid[capRow][endCol] = move.pieceCaptured
+        elif move.isCastle:
+            self.grid[endRow][endCol] = None
+            if move.piece.colour == 'w':
+                if move.kingSide == True:
+                    self.grid[7][7] = self.grid[7][5]
+                    self.grid[7][5] = None
+                    self.grid[7][7].moved = False
+                else:
+                    self.grid[7][0] = self.grid[7][3]
+                    self.grid[7][3] = None
+                    self.grid[7][0].moved = False
+            else:
+                if move.kingSide == True:
+                    self.grid[0][7] = self.grid[0][5]
+                    self.grid[0][5] = None
+                    self.grid[0][7].moved = False
+                else:
+                    self.grid[0][0] = self.grid[0][3]
+                    self.grid[0][3] = None
+                    self.grid[0][0].moved = False
         else:
             self.grid[endRow][endCol] = move.pieceCaptured
 

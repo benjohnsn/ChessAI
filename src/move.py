@@ -3,7 +3,7 @@ class Move:
     Represents a single chess move
     - Includes all information required to make/undo a move
     """
-    def __init__(self, startSq, endSq, piece, pieceCaptured=None, pieceMoved=False, promotionType=None, isEnPassant=False, isCastle=False, kingSide=False, rookMoved=False):
+    def __init__(self, startSq, endSq, piece, pieceCaptured=None, pieceMoved=False, promotionType=None, isEnPassant=False, isCastle=False, kingSide=False):
     
         self.startSq = startSq
         self.endSq = endSq

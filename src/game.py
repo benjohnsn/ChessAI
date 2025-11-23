@@ -1,15 +1,14 @@
 import pygame
 from gui import Gui
 from board import Board
-from move import Move
 from constants import FPS, SQ_SIZE
 class Game:
     """
     Main class
     - Tracks game state
     - Handles player inputs
-    - Executes moves using board and updates turn
     - Draws board through Gui
+    - Executes moves using board and updates turn
     """
     def __init__(self):
         # Initialises pygame and objects

@@ -28,15 +28,16 @@ class Board:
         row, col = square
         return self.grid[row][col]
     
-    def makeMove(self, move):
+    def makeMove(self, move, isTest=False):
         # Executes a move object on the board and pushes it to history
         startRow, startCol = move.startSq
         endRow, endCol = move.endSq
 
-        if self.enPassantTargetSq:
+        if not isTest and self.enPassantTargetSq:
             self.resetEnPassantTarget()
 
         self.grid[startRow][startCol] = None
+        
         if move.promotionType:
             piece = Piece(move.piece.colour, move.promotionType)
             self.grid[endRow][endCol] = piece
@@ -70,9 +71,18 @@ class Board:
         move.pieceMoved = move.piece.moved
         move.piece.moved = True
 
-        self.setEnPassantTarget(move, startRow, endRow)
+        if not isTest:
+            self.setEnPassantTarget(move, startRow, endRow)
 
         self.history.append(move)
+
+    
+    def setEnPassantTarget(self, move, startRow, endRow):
+        # Sets the enPassantTarget flag
+        if move.piece.type == 'P':
+            if abs(startRow - endRow) == 2:
+                move.piece.enPassantTarget = True
+                self.enPassantTargetSq = move.endSq
 
 
     def resetEnPassantTarget(self):
@@ -84,14 +94,6 @@ class Board:
             piece.enPassantTarget = False
         
         self.enPassantTargetSq = ()
-
-
-    def setEnPassantTarget(self, move, startRow, endRow):
-        # Sets the enPassantTarget flag
-        if move.piece.type == 'P':
-            if abs(startRow - endRow) == 2:
-                move.piece.enPassantTarget = True
-                self.enPassantTargetSq = move.endSq
 
 
     def undoMove(self):
@@ -138,7 +140,7 @@ class Board:
         legalMoves = []
 
         for move in pseudoLegalMoves:
-            self.makeMove(move)
+            self.makeMove(move, isTest=True)
 
             if not self.isKingInCheck(piece.colour):
                 legalMoves.append(move)

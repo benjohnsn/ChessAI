@@ -6,8 +6,8 @@ class Game:
     """
     Main class
     - Tracks game state
-    - Handles player inputs
     - Draws board through Gui
+    - Handles player inputs
     - Executes moves using board and updates turn
     """
     def __init__(self):
@@ -88,7 +88,7 @@ class Game:
         # Checks if the move is a pawn attempting to promote
         # Adds promotion type to the move
 
-        # If no piece or not a pawn
+        # Check for pawn move
         if move.piece.type != 'P':
             return
 

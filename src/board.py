@@ -4,7 +4,7 @@ from constants import DIMENSION, KNIGHT_OFFSETS, BISHOP_DIRECTIONS, ROOK_DIRECTI
 
 class Board:
     """
-    Represents the chess board and handles related logic
+    Represents the chess board
     - Stores and updates the board (move/undo) using history
     - Generates pseudo-legal moves for each piece
     - Filters for legal moves using check detection
@@ -389,4 +389,3 @@ class Board:
                     return True
                 
         return False
-                

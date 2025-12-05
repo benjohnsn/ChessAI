@@ -4,7 +4,7 @@ from constants import DIMENSION, KNIGHT_OFFSETS, BISHOP_DIRECTIONS, ROOK_DIRECTI
 
 class Board:
     """
-    Represents the chess board and handles related logic
+    Represents the chess board
     - Stores and updates the board (move/undo) using history
     - Generates pseudo-legal moves for each piece
     - Filters for legal moves using check detection
@@ -28,31 +28,61 @@ class Board:
         row, col = square
         return self.grid[row][col]
     
-    def makeMove(self, move):
+    def makeMove(self, move, isTest=False):
         # Executes a move object on the board and pushes it to history
         startRow, startCol = move.startSq
         endRow, endCol = move.endSq
 
-        if self.enPassantTargetSq:
+        if not isTest and self.enPassantTargetSq:
             self.resetEnPassantTarget()
 
         self.grid[startRow][startCol] = None
+        
         if move.promotionType:
             piece = Piece(move.piece.colour, move.promotionType)
             self.grid[endRow][endCol] = piece
         elif move.isEnPassant:
             capRow = endRow + (1 if move.piece.colour == 'w' else -1)
             self.grid[capRow][endCol] = None
-            self.grid[endRow][endCol] = move.piece     
+            self.grid[endRow][endCol] = move.piece
+        elif move.isCastle:
+            self.grid[endRow][endCol] = move.piece
+            if move.piece.colour == 'w':
+                if move.kingSide == True:
+                    self.grid[7][5] = self.grid[7][7]
+                    self.grid[7][7] = None
+                    self.grid[7][5].moved = True
+                else:
+                    self.grid[7][3] = self.grid[7][0]
+                    self.grid[7][0] = None
+                    self.grid[7][3].moved = True
+            else:
+                if move.kingSide == True:
+                    self.grid[0][5] = self.grid[0][7]
+                    self.grid[0][7] = None
+                    self.grid[0][5].moved = True
+                else:
+                    self.grid[0][3] = self.grid[0][0]
+                    self.grid[0][0] = None
+                    self.grid[0][3].moved = True
         else:
             self.grid[endRow][endCol] = move.piece
 
         move.pieceMoved = move.piece.moved
         move.piece.moved = True
 
-        self.setEnPassantTarget(move, startRow, endRow)
+        if not isTest:
+            self.setEnPassantTarget(move, startRow, endRow)
 
         self.history.append(move)
+
+    
+    def setEnPassantTarget(self, move, startRow, endRow):
+        # Sets the enPassantTarget flag
+        if move.piece.type == 'P':
+            if abs(startRow - endRow) == 2:
+                move.piece.enPassantTarget = True
+                self.enPassantTargetSq = move.endSq
 
 
     def resetEnPassantTarget(self):
@@ -66,14 +96,6 @@ class Board:
         self.enPassantTargetSq = ()
 
 
-    def setEnPassantTarget(self, move, startRow, endRow):
-        # Sets the enPassantTarget flag
-        if move.piece.type == 'P':
-            if abs(startRow - endRow) == 2:
-                move.piece.enPassantTarget = True
-                self.enPassantTargetSq = move.endSq
-
-
     def undoMove(self):
         # Undoes a move using history
         move = self.history.pop()
@@ -84,8 +106,28 @@ class Board:
         self.grid[startRow][startCol] = move.piece
         if move.isEnPassant:
             self.grid[endRow][endCol] = None
-            capRow = endRow + (-1 if move.piece.colour == 'b' else 1)
+            capRow = endRow + (1 if move.piece.colour == 'w' else -1)
             self.grid[capRow][endCol] = move.pieceCaptured
+        elif move.isCastle:
+            self.grid[endRow][endCol] = None
+            if move.piece.colour == 'w':
+                if move.kingSide == True:
+                    self.grid[7][7] = self.grid[7][5]
+                    self.grid[7][5] = None
+                    self.grid[7][7].moved = False
+                else:
+                    self.grid[7][0] = self.grid[7][3]
+                    self.grid[7][3] = None
+                    self.grid[7][0].moved = False
+            else:
+                if move.kingSide == True:
+                    self.grid[0][7] = self.grid[0][5]
+                    self.grid[0][5] = None
+                    self.grid[0][7].moved = False
+                else:
+                    self.grid[0][0] = self.grid[0][3]
+                    self.grid[0][3] = None
+                    self.grid[0][0].moved = False
         else:
             self.grid[endRow][endCol] = move.pieceCaptured
 
@@ -98,7 +140,7 @@ class Board:
         legalMoves = []
 
         for move in pseudoLegalMoves:
-            self.makeMove(move)
+            self.makeMove(move, isTest=True)
 
             if not self.isKingInCheck(piece.colour):
                 legalMoves.append(move)
@@ -225,6 +267,38 @@ class Board:
                     move = Move(square, (r, c), piece, target, piece.moved)
                     moves.append(move)
 
+        if piece.moved == False and not self.isKingInCheck(piece.colour):
+            if piece.colour == 'w':
+
+                cornerPiece = self.grid[7][7]
+                if cornerPiece and cornerPiece.type == 'R' and cornerPiece.colour == piece.colour and cornerPiece.moved == False:
+                    if self.grid[7][5] is None and self.grid[7][6] is None:
+                        if not self.squareAttacked((7, 5), 'b') and not self.squareAttacked((7, 6), 'b'):
+                            move = Move(square, (7, 6), piece, None, piece.moved, isCastle=True, kingSide=True)
+                            moves.append(move)
+
+                cornerPiece = self.grid[7][0]
+                if cornerPiece and cornerPiece.type == 'R' and cornerPiece.colour == piece.colour and cornerPiece.moved == False:
+                    if self.grid[7][3] is None and self.grid[7][2] is None and self.grid[7][1] is None:
+                        if not self.squareAttacked((7, 3), 'b') and not self.squareAttacked((7, 2), 'b'):
+                            move = Move(square, (7, 2), piece, None, piece.moved, isCastle=True)
+                            moves.append(move)
+            else:
+                
+                cornerPiece = self.grid[0][7]
+                if cornerPiece and cornerPiece.type == 'R' and cornerPiece.colour == piece.colour and cornerPiece.moved == False:
+                    if self.grid[0][5] is None and self.grid[0][6] is None:
+                        if not self.squareAttacked((0, 5), 'w') and not self.squareAttacked((0, 6), 'w'):
+                            move = Move(square, (0, 6), piece, None, piece.moved, isCastle=True, kingSide=True)
+                            moves.append(move)
+
+                cornerPiece = self.grid[0][0]
+                if cornerPiece and cornerPiece.type == 'R' and cornerPiece.colour == piece.colour and cornerPiece.moved == False:
+                    if self.grid[0][3] is None and self.grid[0][2] is None and self.grid[0][1] is None:
+                        if not self.squareAttacked((0, 3), 'w') and not self.squareAttacked((0, 2), 'w'):
+                            move = Move(square, (0, 2), piece, None, piece.moved, isCastle=True)
+                            moves.append(move)
+
         return moves
 
 
@@ -235,16 +309,30 @@ class Board:
 
     def isKingInCheck(self, colour):
         # Checks if the player's king is in check
-        kingRow, kingCol = self.findKing(colour)
-
+        square = self.findKing(colour)
         enemy = 'b' if colour == 'w' else 'w'
+        return self.squareAttacked(square, enemy)
             
+
+    def findKing(self, colour):
+    # Iterates through the board to find the player's king
+        for row in range(DIMENSION):
+            for col in range(DIMENSION):
+                piece = self.grid[row][col]
+                if piece and piece.type == 'K' and piece.colour == colour:
+                    return (row, col)
+
+
+    def squareAttacked(self, square, enemy):
+        # Checks if a square is attacked by the enemy
+        row, col = square
+
         # Pawn Attacks
-        rowOffset = -1 if colour == 'w' else 1    
+        rowOffset = 1 if enemy == 'w' else -1    
 
         for colOffset in (-1, 1):
-            r = kingRow + rowOffset
-            c = kingCol + colOffset
+            r = row + rowOffset
+            c = col + colOffset
             if self.inBounds(r, c):
                 piece = self.grid[r][c]
                 if piece and piece.colour == enemy and piece.type == 'P':
@@ -252,8 +340,8 @@ class Board:
         
         # Knight Attacks
         for rowOffset, colOffset in KNIGHT_OFFSETS:
-            r = kingRow + rowOffset
-            c = kingCol + colOffset
+            r = row + rowOffset
+            c = col + colOffset
             if self.inBounds(r, c):
                 piece = self.grid[r][c]
                 if piece and piece.colour == enemy and piece.type == 'N':
@@ -261,8 +349,8 @@ class Board:
 
         # Rook and Queen Attacks (straight lines) 
         for rowDir, colDir in ROOK_DIRECTIONS:
-            r = kingRow + rowDir
-            c = kingCol + colDir
+            r = row + rowDir
+            c = col + colDir
 
             while self.inBounds(r, c):
                 piece = self.grid[r][c]
@@ -277,8 +365,8 @@ class Board:
 
         # Bishop and Queen Attacks (diagonal lines)
         for rowDir, colDir in BISHOP_DIRECTIONS:
-            r = kingRow + rowDir
-            c = kingCol + colDir
+            r = row + rowDir
+            c = col + colDir
 
             while self.inBounds(r, c):
                 piece = self.grid[r][c]
@@ -293,21 +381,11 @@ class Board:
 
         # King Attacks
         for rowOffset, colOffset in KING_OFFSETS:
-            r = kingRow + rowOffset
-            c = kingCol + colOffset
+            r = row + rowOffset
+            c = col + colOffset
             if self.inBounds(r, c):
                 piece = self.grid[r][c]
                 if piece and piece.colour == enemy and piece.type == 'K':
                     return True
                 
         return False
-
-
-    def findKing(self, colour):
-        # Iterates through the board to find the player's king
-        for row in range(DIMENSION):
-            for col in range(DIMENSION):
-                piece = self.grid[row][col]
-                if piece and piece.type == 'K' and piece.colour == colour:
-                    return (row, col)
-                

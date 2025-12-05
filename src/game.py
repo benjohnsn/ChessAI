@@ -1,15 +1,14 @@
 import pygame
 from gui import Gui
 from board import Board
-from move import Move
 from constants import FPS, SQ_SIZE
 class Game:
     """
     Main class
     - Tracks game state
+    - Draws board through Gui
     - Handles player inputs
     - Executes moves using board and updates turn
-    - Draws board through Gui
     """
     def __init__(self):
         # Initialises pygame and objects
@@ -89,7 +88,7 @@ class Game:
         # Checks if the move is a pawn attempting to promote
         # Adds promotion type to the move
 
-        # If no piece or not a pawn
+        # Check for pawn move
         if move.piece.type != 'P':
             return
 

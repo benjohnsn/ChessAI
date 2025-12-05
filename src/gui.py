@@ -15,8 +15,7 @@ class Gui:
         pygame.display.set_caption(CAPTION)
         self.images = {}
         self.loadImages()
-        self.colours = [pygame.Color(LIGHT_COL), pygame.Color(DARK_COL)]
-        self.highlightColours = [pygame.Color(SELECTION_HIGHLIGHT_COL), pygame.Color(TARGET_HIGHLIGHT_COL)]
+        self.colours = [pygame.Color(LIGHT_COL), pygame.Color(DARK_COL), pygame.Color(SELECTION_HIGHLIGHT_COL), pygame.Color(TARGET_HIGHLIGHT_COL)]
 
 
     def loadImages(self):
@@ -35,11 +34,11 @@ class Gui:
 
                 # Higlight Square
                 if (row, col) == highlightSq:
-                    colour = self.highlightColours[0]
+                    colour = self.colours[2]
                 
                 # Highlight Target squares
                 if (row, col) in targetSqs:
-                    colour = self.highlightColours[1]
+                    colour = self.colours[3]
 
                 pygame.draw.rect(self.screen, colour, rect)
 

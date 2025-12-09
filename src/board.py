@@ -35,6 +35,28 @@ class Board:
         return self.moveGen.generateLegalMoves(piece, square)
     
 
+    def generateAllLegalMoves(self, colour):
+        # Generates all legal moves for a player
+        moves = []
+
+        for row in range(8):
+            for col in range(8):
+                piece = self.grid[row][col]
+                if piece is None:
+                    continue
+                if piece.colour != colour:
+                    continue
+
+                pieceMoves = self.generateLegalMoves(piece, (row, col))
+
+                moves.extend(pieceMoves)
+
+        return moves
+    
+    def inCheck(self, colour):
+        return self.moveGen.isKingInCheck(colour)
+    
+
     def setEnPassantSq(self, move, startRow, endRow, endCol):
         # Sets the en Passant Square
         if move.piece.type == 'P' and abs(startRow - endRow) == 2:

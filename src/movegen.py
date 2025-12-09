@@ -11,7 +11,7 @@ class MoveGen:
         legalMoves = []
 
         for move in pseudoLegalMoves:
-            self.board.makeMove(move, isTest=True)
+            self.board.makeMove(move)
 
             if not self.isKingInCheck(piece.colour):
                 legalMoves.append(move)
@@ -68,10 +68,11 @@ class MoveGen:
                 if target and target.colour != piece.colour:
                     move = Move(square, (r, c), piece, target, piece.moved)
                     moves.append(move)
-            if self.inBounds(row, c): 
-                target = self.board.grid[row][c] 
-                if target and target.colour != piece.colour and target.enPassantTarget == True: 
-                    move = Move(square, (r, c), piece, target, piece.moved, isEnPassant=True) 
+
+                # Checks for en Passant
+                if (r, c) == self.board.enPassantSq:
+                    target = self.board.grid[row][c]
+                    move = Move(square, (r, c), piece, target, piece.moved, isEnPassant=True)
                     moves.append(move)
 
         return moves

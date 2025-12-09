@@ -44,7 +44,7 @@ class MoveGen:
 
         # Forward one square
         if self.inBounds(r, c):
-            target = self.board.grid[r][c]
+            target = self.board.getPiece((r, c))
             if target is None:
                 move = Move(square, (r, c), piece, target, piece.moved)
                 moves.append(move)
@@ -54,7 +54,7 @@ class MoveGen:
                 # Forward two squares (only if pawn has not moved)
                 if self.inBounds(r2, c):
                     if not piece.moved:
-                        target = self.board.grid[r2][c]
+                        target = self.board.getPiece((r2, c))
                         if target is None:
                             move = Move(square, (r2, c), piece, target, piece.moved)
                             moves.append(move)
@@ -64,16 +64,17 @@ class MoveGen:
         for colOffset in (-1, 1):
             c = col + colOffset
             if self.inBounds(r, c):
-                target = self.board.grid[r][c]
+                target = self.board.getPiece((r, c))
                 if target and target.colour != piece.colour:
                     move = Move(square, (r, c), piece, target, piece.moved)
                     moves.append(move)
 
                 # Checks for en Passant
                 if (r, c) == self.board.enPassantSq:
-                    target = self.board.grid[row][c]
-                    move = Move(square, (r, c), piece, target, piece.moved, isEnPassant=True)
-                    moves.append(move)
+                    target = self.board.getPiece((row, c))
+                    if target and target.type == 'P' and target.colour != piece.colour:
+                        move = Move(square, (r, c), piece, target, piece.moved, isEnPassant=True)
+                        moves.append(move)
 
         return moves
 
@@ -87,7 +88,7 @@ class MoveGen:
             r = row + rowOffset
             c = col + colOffset
             if self.inBounds(r, c):
-                target = self.board.grid[r][c]
+                target = self.board.getPiece((r, c))
                 if target is None or target.colour != piece.colour:
                     move = Move(square, (r, c), piece, target, piece.moved)
                     moves.append(move)
@@ -107,7 +108,7 @@ class MoveGen:
 
             # Keep moving until out of bounds/blocked
             while self.inBounds(r, c):
-                target = self.board.grid[r][c]
+                target = self.board.getPiece((r, c))
                 
                 if target is None:          # Empty Square
                     move = Move(square, (r, c), piece, target, piece.moved)
@@ -134,7 +135,7 @@ class MoveGen:
             r = row + rowOffset
             c = col + colOffset
             if self.inBounds(r, c):
-                target = self.board.grid[r][c]
+                target = self.board.getPiece((r, c))
                 if target is None or target.colour != piece.colour:
                     move = Move(square, (r, c), piece, target, piece.moved)
                     moves.append(move)
@@ -142,31 +143,31 @@ class MoveGen:
         if piece.moved == False and not self.isKingInCheck(piece.colour):
             if piece.colour == 'w':
 
-                cornerPiece = self.board.grid[7][7]
+                cornerPiece = self.board.getPiece((7, 7))
                 if cornerPiece and cornerPiece.type == 'R' and cornerPiece.colour == piece.colour and cornerPiece.moved == False:
-                    if self.board.grid[7][5] is None and self.board.grid[7][6] is None:
-                        if not self.squareAttacked((7, 5), 'b') and not self.squareAttacked((7, 6), 'b'):
+                    if self.board.getPiece((7, 5)) is None and self.board.getPiece((7, 6)) is None:
+                        if not self.squareAttacked*((7, 5), 'b') and not self.squareAttacked((7, 6), 'b'):
                             move = Move(square, (7, 6), piece, None, piece.moved, isCastle=True, kingSide=True)
                             moves.append(move)
 
-                cornerPiece = self.board.grid[7][0]
+                cornerPiece = self.board.getPiece((7, 0))
                 if cornerPiece and cornerPiece.type == 'R' and cornerPiece.colour == piece.colour and cornerPiece.moved == False:
-                    if self.board.grid[7][3] is None and self.board.grid[7][2] is None and self.board.grid[7][1] is None:
+                    if self.board.getPiece((7, 3)) is None and self.board.getPiece((7, 2)) is None and self.board.getPiece((7, 1)) is None:
                         if not self.squareAttacked((7, 3), 'b') and not self.squareAttacked((7, 2), 'b'):
                             move = Move(square, (7, 2), piece, None, piece.moved, isCastle=True)
                             moves.append(move)
             else:
                 
-                cornerPiece = self.board.grid[0][7]
+                cornerPiece = self.board.getPiece((0, 7))
                 if cornerPiece and cornerPiece.type == 'R' and cornerPiece.colour == piece.colour and cornerPiece.moved == False:
-                    if self.board.grid[0][5] is None and self.board.grid[0][6] is None:
+                    if self.board.getPiece((0, 5)) is None and self.board.getPiece((0, 6)) is None:
                         if not self.squareAttacked((0, 5), 'w') and not self.squareAttacked((0, 6), 'w'):
                             move = Move(square, (0, 6), piece, None, piece.moved, isCastle=True, kingSide=True)
                             moves.append(move)
 
-                cornerPiece = self.board.grid[0][0]
+                cornerPiece = self.board.getPiece((0, 0))
                 if cornerPiece and cornerPiece.type == 'R' and cornerPiece.colour == piece.colour and cornerPiece.moved == False:
-                    if self.board.grid[0][3] is None and self.board.grid[0][2] is None and self.board.grid[0][1] is None:
+                    if self.board.getPiece((0, 3)) is None and self.board.getPiece((0, 2)) is None and self.board.getPiece((0, 1)) is None:
                         if not self.squareAttacked((0, 3), 'w') and not self.squareAttacked((0, 2), 'w'):
                             move = Move(square, (0, 2), piece, None, piece.moved, isCastle=True)
                             moves.append(move)
@@ -190,7 +191,7 @@ class MoveGen:
     # Iterates through the board to find the player's king
         for row in range(DIMENSION):
             for col in range(DIMENSION):
-                piece = self.board.grid[row][col]
+                piece = self.board.getPiece((row, col))
                 if piece and piece.type == 'K' and piece.colour == colour:
                     return (row, col)
 
@@ -206,7 +207,7 @@ class MoveGen:
             r = row + rowOffset
             c = col + colOffset
             if self.inBounds(r, c):
-                piece = self.board.grid[r][c]
+                piece = self.board.getPiece((r, c))
                 if piece and piece.colour == enemy and piece.type == 'P':
                     return True
         
@@ -215,7 +216,7 @@ class MoveGen:
             r = row + rowOffset
             c = col + colOffset
             if self.inBounds(r, c):
-                piece = self.board.grid[r][c]
+                piece = self.board.getPiece((r, c))
                 if piece and piece.colour == enemy and piece.type == 'N':
                     return True
 
@@ -225,7 +226,7 @@ class MoveGen:
             c = col + colDir
 
             while self.inBounds(r, c):
-                piece = self.board.grid[r][c]
+                piece = self.board.getPiece((r, c))
 
                 if piece:
                     if piece.colour == enemy and (piece.type == 'R' or piece.type == 'Q'):
@@ -241,7 +242,7 @@ class MoveGen:
             c = col + colDir
 
             while self.inBounds(r, c):
-                piece = self.board.grid[r][c]
+                piece = self.board.getPiece((r, c))
 
                 if piece:
                     if piece.colour == enemy and (piece.type == 'B' or piece.type == 'Q'):
@@ -256,7 +257,7 @@ class MoveGen:
             r = row + rowOffset
             c = col + colOffset
             if self.inBounds(r, c):
-                piece = self.board.grid[r][c]
+                piece = self.board.getPiece((r, c))
                 if piece and piece.colour == enemy and piece.type == 'K':
                     return True
                 

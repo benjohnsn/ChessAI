@@ -125,3 +125,4 @@ class Board:
             self.grid[endRow][endCol] = move.pieceCaptured
 
         move.piece.moved = move.prevPieceMoved
+        self.enPassantSq = move.prevEnPassantSq

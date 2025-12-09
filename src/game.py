@@ -122,7 +122,7 @@ class Game:
     def checkGameEnd(self):
         # Checks for game end
         if self.board.insufficientMaterial():
-            print("Insufficient Material")
+            print("Draw: Insufficient material!")
             return True
 
         if self.board.generateAllLegalMoves(self.turn):
@@ -145,6 +145,7 @@ class Game:
         self.targetSq = ()
         self.legalMoves = []
         self.targetSqs = []
+
 
     def endGame(self):
         pygame.time.delay(5000)

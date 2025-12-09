@@ -16,3 +16,13 @@ venv/
 # -----------------------
 .vscode/*
 !.vscode/launch.json
+
+# -----------------------
+# Local utility scripts
+# -----------------------
+src/script.py
+
+# -----------------------
+# Generated merge file
+# -----------------------
+merged.txt

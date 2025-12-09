@@ -1,4 +1,3 @@
-import copy
 from move import Move
 from constants import DIMENSION, KNIGHT_OFFSETS, BISHOP_DIRECTIONS, ROOK_DIRECTIONS, QUEEN_DIRECTIONS, KING_OFFSETS
 
@@ -12,8 +11,7 @@ class MoveGen:
         legalMoves = []
 
         for move in pseudoLegalMoves:
-            testMove = copy.deepcopy(move)
-            self.board.makeMove(testMove)
+            self.board.makeMove(move)
 
             if not self.isKingInCheck(piece.colour):
                 legalMoves.append(move)
@@ -74,9 +72,9 @@ class MoveGen:
                 # Checks for en Passant
                 if (r, c) == self.board.enPassantSq:
                     target = self.board.getPiece((row, c))
-                    # if target and target.type == 'P' and target.colour != piece.colour:
-                    move = Move(square, (r, c), piece, target, piece.moved, isEnPassant=True)
-                    moves.append(move)
+                    if target and target.type == 'P' and target.colour != piece.colour:
+                        move = Move(square, (r, c), piece, target, piece.moved, isEnPassant=True)
+                        moves.append(move)
 
         return moves
 

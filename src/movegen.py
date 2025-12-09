@@ -1,3 +1,4 @@
+import copy
 from move import Move
 from constants import DIMENSION, KNIGHT_OFFSETS, BISHOP_DIRECTIONS, ROOK_DIRECTIONS, QUEEN_DIRECTIONS, KING_OFFSETS
 
@@ -11,7 +12,8 @@ class MoveGen:
         legalMoves = []
 
         for move in pseudoLegalMoves:
-            self.board.makeMove(move)
+            testMove = copy.deepcopy(move)
+            self.board.makeMove(testMove)
 
             if not self.isKingInCheck(piece.colour):
                 legalMoves.append(move)
@@ -72,9 +74,9 @@ class MoveGen:
                 # Checks for en Passant
                 if (r, c) == self.board.enPassantSq:
                     target = self.board.getPiece((row, c))
-                    if target and target.type == 'P' and target.colour != piece.colour:
-                        move = Move(square, (r, c), piece, target, piece.moved, isEnPassant=True)
-                        moves.append(move)
+                    # if target and target.type == 'P' and target.colour != piece.colour:
+                    move = Move(square, (r, c), piece, target, piece.moved, isEnPassant=True)
+                    moves.append(move)
 
         return moves
 
@@ -146,7 +148,7 @@ class MoveGen:
                 cornerPiece = self.board.getPiece((7, 7))
                 if cornerPiece and cornerPiece.type == 'R' and cornerPiece.colour == piece.colour and cornerPiece.moved == False:
                     if self.board.getPiece((7, 5)) is None and self.board.getPiece((7, 6)) is None:
-                        if not self.squareAttacked*((7, 5), 'b') and not self.squareAttacked((7, 6), 'b'):
+                        if not self.squareAttacked((7, 5), 'b') and not self.squareAttacked((7, 6), 'b'):
                             move = Move(square, (7, 6), piece, None, piece.moved, isCastle=True, kingSide=True)
                             moves.append(move)
 

@@ -22,29 +22,43 @@ class Board:
         ]
         self.moveGen = MoveGen(self)
         self.history = []
-        self.enPassantTargetSq = ()
+        self.enPassantSq = None
 
     def getPiece(self, square):
         # Returns piece at square
         row, col = square
         return self.grid[row][col]
     
-    def makeMove(self, move, isTest=False):
+
+    def generateLegalMoves(self, piece, square):
+        # Generates the legal moves using MoveGen
+        return self.moveGen.generateLegalMoves(piece, square)
+    
+
+    def setEnPassantSq(self, move, startRow, endRow, endCol):
+        # Sets the en Passant Square
+        if move.piece.type == 'P' and abs(startRow - endRow) == 2:
+            self.enPassantSq = ((startRow + endRow) // 2, endCol)
+        else:
+            self.enPassantSq = None
+
+
+    def makeMove(self, move):
         # Executes a move object on the board and pushes it to history
         startRow, startCol = move.startSq
         endRow, endCol = move.endSq
 
-        if not isTest and self.enPassantTargetSq:
-            self.resetEnPassantTarget()
+        # Stores previous states for undo
+        move.prevPieceMoved = move.piece.moved
+        move.prevEnPassantSq = self.enPassantSq
 
         self.grid[startRow][startCol] = None
-        
+
         if move.promotionType:
             piece = Piece(move.piece.colour, move.promotionType)
             self.grid[endRow][endCol] = piece
         elif move.isEnPassant:
-            capRow = endRow + (1 if move.piece.colour == 'w' else -1)
-            self.grid[capRow][endCol] = None
+            self.grid[startRow][endCol] = None
             self.grid[endRow][endCol] = move.piece
         elif move.isCastle:
             self.grid[endRow][endCol] = move.piece
@@ -69,32 +83,10 @@ class Board:
         else:
             self.grid[endRow][endCol] = move.piece
 
-        move.pieceMoved = move.piece.moved
-        move.piece.moved = True
-
-        if not isTest:
-            self.setEnPassantTarget(move, startRow, endRow)
-
         self.history.append(move)
 
-    
-    def setEnPassantTarget(self, move, startRow, endRow):
-        # Sets the enPassantTarget flag
-        if move.piece.type == 'P':
-            if abs(startRow - endRow) == 2:
-                move.piece.enPassantTarget = True
-                self.enPassantTargetSq = move.endSq
-
-
-    def resetEnPassantTarget(self):
-        # Resets the enPassantTarget Flag
-        row, col = self.enPassantTargetSq
-        piece = self.grid[row][col]
-
-        if piece and piece.type == 'P':
-            piece.enPassantTarget = False
-        
-        self.enPassantTargetSq = ()
+        move.piece.moved = True
+        self.setEnPassantSq(move, startRow, endRow, endCol)
 
 
     def undoMove(self):
@@ -105,10 +97,10 @@ class Board:
         endRow, endCol = move.endSq
 
         self.grid[startRow][startCol] = move.piece
+
         if move.isEnPassant:
             self.grid[endRow][endCol] = None
-            capRow = endRow + (1 if move.piece.colour == 'w' else -1)
-            self.grid[capRow][endCol] = move.pieceCaptured
+            self.grid[startRow][endCol] = move.pieceCaptured
         elif move.isCastle:
             self.grid[endRow][endCol] = None
             if move.piece.colour == 'w':
@@ -132,7 +124,4 @@ class Board:
         else:
             self.grid[endRow][endCol] = move.pieceCaptured
 
-        move.piece.moved = move.pieceMoved
-
-    def generateLegalMoves(self, piece, square):
-        return self.moveGen.generateLegalMoves(piece, square)
+        move.piece.moved = move.prevPieceMoved

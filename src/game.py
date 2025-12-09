@@ -32,8 +32,7 @@ class Game:
             self.gui.draw(self.board, self.pieceSq, self.targetSqs)
             pygame.display.flip()
             if self.gameEnd:
-                pygame.time.delay(5000)
-                self.running = False
+                self.endGame()
             self.clock.tick(FPS)
 
 
@@ -86,6 +85,7 @@ class Game:
                 self.switchTurn()
                 self.resetMoveData()
                 self.gameEnd = self.checkGameEnd()
+
                 return
 
 
@@ -120,7 +120,11 @@ class Game:
 
 
     def checkGameEnd(self):
-        # Checks for Game end
+        # Checks for game end
+        if self.board.insufficientMaterial():
+            print("Insufficient Material")
+            return True
+
         if self.board.generateAllLegalMoves(self.turn):
             return False
         
@@ -131,13 +135,17 @@ class Game:
                 print("Checkmate: White won!")
         else:
             print("Stalemate!")
-
+        
         return True
 
 
     def resetMoveData(self):
-        # Resets Move Data
+        # Resets move data
         self.pieceSq = ()
         self.targetSq = ()
         self.legalMoves = []
         self.targetSqs = []
+
+    def endGame(self):
+        pygame.time.delay(5000)
+        self.running = False

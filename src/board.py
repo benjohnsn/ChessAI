@@ -1,6 +1,6 @@
 from piece import Piece
-from move import Move
 from movegen import MoveGen
+from constants import DIMENSION
 
 class Board:
     """
@@ -12,12 +12,12 @@ class Board:
     def __init__(self):
         self.grid = [
             [Piece('b','R'), Piece('b','N'), Piece('b','B'), Piece('b','Q'), Piece('b','K'), Piece('b','B'), Piece('b','N'), Piece('b','R')],
-            [Piece('b','P') for _ in range(8)],
-            [None]*8,
-            [None]*8,
-            [None]*8,
-            [None]*8,
-            [Piece('w','P') for _ in range(8)],
+            [Piece('b','P') for _ in range(DIMENSION)],
+            [None]*DIMENSION,
+            [None]*DIMENSION,
+            [None]*DIMENSION,
+            [None]*DIMENSION,
+            [Piece('w','P') for _ in range(DIMENSION)],
             [Piece('w','R'), Piece('w','N'), Piece('w','B'), Piece('w','Q'), Piece('w','K'), Piece('w','B'), Piece('w','N'), Piece('w','R')]
         ]
         self.moveGen = MoveGen(self)
@@ -39,8 +39,8 @@ class Board:
         # Generates all legal moves for a player
         moves = []
 
-        for row in range(8):
-            for col in range(8):
+        for row in range(DIMENSION):
+            for col in range(DIMENSION):
                 piece = self.grid[row][col]
                 if piece is None:
                     continue
@@ -53,8 +53,54 @@ class Board:
 
         return moves
     
+
     def inCheck(self, colour):
         return self.moveGen.isKingInCheck(colour)
+    
+
+    def insufficientMaterial(self):
+        # Checks for Insufficient Material
+        pieces = []
+
+        for row in range(DIMENSION):
+            for col in range(DIMENSION):
+                piece = self.grid[row][col]
+                
+                if piece:
+                    pieces.append((piece, row , col))
+        
+        # King VS King
+        if len(pieces) == 2:
+            return True
+        
+        # King VS King + Minor Piece
+        if len(pieces) == 3:
+            minorPiece = None
+    
+            for piece, _, _ in pieces:
+                if piece.type != 'K':
+                    minorPiece = piece
+                    break
+
+            if minorPiece and minorPiece.type in ('B', 'N'):
+                return True
+        
+        # King + Bishop VS King + Bishop (same colour)
+        if len(pieces) == 4:
+            bishops = []
+
+            for piece, row, col in pieces:
+                if piece.type == 'B':
+                    bishops.append((piece, row, col))
+
+            if len(bishops) == 2:
+                _, r1, c1 = bishops[0]
+                _, r2, c2 = bishops[1]
+
+                if (r1 + c1) % 2 == (r2 + c2) % 2:
+                    return True
+
+        return False
     
 
     def setEnPassantSq(self, move, startRow, endRow, endCol):

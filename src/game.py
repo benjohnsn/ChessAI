@@ -11,7 +11,7 @@ class Game:
     - Executes moves using board and updates turn
     """
     def __init__(self):
-        # Initialises pygame and objects
+        # Initialises pygame, objects and game data
         pygame.init()
         self.running = True
         self.gameEnd = False
@@ -47,7 +47,7 @@ class Game:
 
 
     def handleClick(self, pos):
-        # Handles player click
+        # Handles a player click
         square = self.getSquareFromPos(pos)
         piece = self.board.getPiece(square)
 
@@ -70,6 +70,7 @@ class Game:
 
 
     def firstClick(self, square, piece):
+        # 1st click
         self.pieceSq = square
         self.legalMoves = self.board.generateLegalMoves(piece, square)
         self.targetSqs = [move.endSq for move in self.legalMoves]
@@ -82,11 +83,8 @@ class Game:
 
                 self.checkPawnPromotion(move)
                 self.board.makeMove(move)
-
-                self.resetMoveData()
-
                 self.switchTurn()
-
+                self.resetMoveData()
                 self.gameEnd = self.checkGameEnd()
                 return
 
@@ -122,6 +120,7 @@ class Game:
 
 
     def checkGameEnd(self):
+        # Checks for Game end
         if self.board.generateAllLegalMoves(self.turn):
             return False
         

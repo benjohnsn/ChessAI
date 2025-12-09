@@ -24,3 +24,4 @@ class Move:
 
     def __repr__(self):
         return f"Move({self.startSq}->{self.endSq}, {self.piece.type})"
+    

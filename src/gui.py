@@ -19,7 +19,7 @@ class Gui:
 
 
     def loadImages(self):
-        # Loads piece images from images folder and scales them to square size
+        # Loads piece images from folder and scales them to square size
         pieces = ['wP', 'wR', 'wN', 'wB', 'wQ', 'wK', 'bP', 'bR', 'bN', 'bB', 'bQ', 'bK']
         for piece in pieces:
             self.images[piece] = pygame.transform.scale(pygame.image.load("images/" + piece  + ".png"), (SQ_SIZE, SQ_SIZE))
@@ -32,11 +32,11 @@ class Gui:
                 rect = pygame.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE)
                 colour = self.colours[(row + col) % 2]
 
-                # Higlight Square
+                # Higlights Square
                 if (row, col) == highlightSq:
                     colour = self.colours[2]
                 
-                # Highlight Target squares
+                # Highlights Target squares
                 if (row, col) in targetSqs:
                     colour = self.colours[3]
 

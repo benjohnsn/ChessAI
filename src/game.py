@@ -1,6 +1,6 @@
 import pygame
-from gui import Gui
 from board import Board
+from gui import Gui
 from constants import FPS, SQ_SIZE
 class Game:
     """
@@ -23,6 +23,7 @@ class Game:
         self.targetSq = ()
         self.legalMoves = []
         self.targetSqs = []
+        self.halfMoveCount = 0
 
 
     def run(self):
@@ -81,7 +82,14 @@ class Game:
             if self.targetSq == move.endSq:
 
                 self.checkPawnPromotion(move)
+
                 self.board.makeMove(move)
+
+                if move.piece.type == 'P' or move.pieceCaptured:
+                    self.halfMoveCount = 0
+                else:
+                    self.halfMoveCount += 1
+
                 self.switchTurn()
                 self.resetMoveData()
                 self.gameEnd = self.checkGameEnd()
@@ -123,6 +131,10 @@ class Game:
         # Checks for game end
         if self.board.insufficientMaterial():
             print("Draw: Insufficient material!")
+            return True
+        
+        if self.halfMoveCount == 150:
+            print("Draw: 75 move rule!")
             return True
 
         if self.board.generateAllLegalMoves(self.turn):

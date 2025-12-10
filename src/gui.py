@@ -5,7 +5,7 @@ class Gui:
     """
     User interface for the chess game
     - Creates and manages pygame display
-    - Loads and store piece images
+    - Loads and stores piece images
     - Draws chessboard and pieces
     - Highlights selected square and target squares
     """
@@ -13,13 +13,13 @@ class Gui:
         # Initialises screen, loads piece images and board colours
         self.screen = pygame.display.set_mode(SIZE)
         pygame.display.set_caption(CAPTION)
+        self.colours = [pygame.Color(LIGHT_COL), pygame.Color(DARK_COL), pygame.Color(SELECTION_HIGHLIGHT_COL), pygame.Color(TARGET_HIGHLIGHT_COL)]
         self.images = {}
         self.loadImages()
-        self.colours = [pygame.Color(LIGHT_COL), pygame.Color(DARK_COL), pygame.Color(SELECTION_HIGHLIGHT_COL), pygame.Color(TARGET_HIGHLIGHT_COL)]
 
 
     def loadImages(self):
-        # Loads piece images from images folder and scales them to square size
+        # Loads piece images from folder and scales them to square size
         pieces = ['wP', 'wR', 'wN', 'wB', 'wQ', 'wK', 'bP', 'bR', 'bN', 'bB', 'bQ', 'bK']
         for piece in pieces:
             self.images[piece] = pygame.transform.scale(pygame.image.load("images/" + piece  + ".png"), (SQ_SIZE, SQ_SIZE))
@@ -32,11 +32,11 @@ class Gui:
                 rect = pygame.Rect(col * SQ_SIZE, row * SQ_SIZE, SQ_SIZE, SQ_SIZE)
                 colour = self.colours[(row + col) % 2]
 
-                # Higlight Square
+                # Higlights Square
                 if (row, col) == highlightSq:
                     colour = self.colours[2]
                 
-                # Highlight Target squares
+                # Highlights Target squares
                 if (row, col) in targetSqs:
                     colour = self.colours[3]
 

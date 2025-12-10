@@ -5,9 +5,9 @@ from constants import DIMENSION
 class Board:
     """
     Represents the chess board
-    - Stores and updates the board (move/undo) using history
-    - Generates pseudo-legal moves for each piece
-    - Filters for legal moves using check detection
+    - Stores and updates the board as well as history
+    - Generates legal moves using movegen and detects check/insufficient material
+    - Executes and undoes moves including: (normal, promotion, en Passant, castling)
     """
     def __init__(self):
         self.grid = [
@@ -65,7 +65,7 @@ class Board:
         for row in range(DIMENSION):
             for col in range(DIMENSION):
                 piece = self.grid[row][col]
-                
+
                 if piece:
                     pieces.append((piece, row , col))
         

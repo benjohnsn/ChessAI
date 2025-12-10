@@ -5,7 +5,7 @@ class Gui:
     """
     User interface for the chess game
     - Creates and manages pygame display
-    - Loads and store piece images
+    - Loads and stores piece images
     - Draws chessboard and pieces
     - Highlights selected square and target squares
     """
@@ -13,9 +13,9 @@ class Gui:
         # Initialises screen, loads piece images and board colours
         self.screen = pygame.display.set_mode(SIZE)
         pygame.display.set_caption(CAPTION)
+        self.colours = [pygame.Color(LIGHT_COL), pygame.Color(DARK_COL), pygame.Color(SELECTION_HIGHLIGHT_COL), pygame.Color(TARGET_HIGHLIGHT_COL)]
         self.images = {}
         self.loadImages()
-        self.colours = [pygame.Color(LIGHT_COL), pygame.Color(DARK_COL), pygame.Color(SELECTION_HIGHLIGHT_COL), pygame.Color(TARGET_HIGHLIGHT_COL)]
 
 
     def loadImages(self):

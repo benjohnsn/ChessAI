@@ -2,6 +2,12 @@ from move import Move
 from constants import DIMENSION, KNIGHT_OFFSETS, BISHOP_DIRECTIONS, ROOK_DIRECTIONS, QUEEN_DIRECTIONS, KING_OFFSETS
 
 class MoveGen:
+    """
+    Move Generation Engine
+    - Produces pseudo-legal moves and legal moves for every piece type
+    - Detects checks, attacks and validates moves for king safety
+    - Supports special moves such as promotion, en passant and castling
+    """
     def __init__(self, board):
         self.board = board
 

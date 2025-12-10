@@ -1,4 +1,8 @@
 class Piece:
+    """
+    Chess Piece
+    - Stores a piece's colour, type and moved flag
+    """
     def __init__(self, colour, type):
         self.colour = colour
         self.type = type

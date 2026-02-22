@@ -1,7 +1,7 @@
 import pygame
-from board import Board
-from gui import Gui
-from constants import FPS, SQ_SIZE
+from .board import Board
+from .gui import Gui
+from .constants import FPS, SQ_SIZE
 class Game:
     """
     Main class

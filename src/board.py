@@ -1,6 +1,6 @@
-from piece import Piece
-from movegen import MoveGen
-from constants import DIMENSION
+from .piece import Piece
+from .movegen import MoveGen
+from .constants import DIMENSION
 
 class Board:
     """
